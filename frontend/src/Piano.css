@@ -1,0 +1,60 @@
+.white_key {
+    background-color: white;
+    height: 100%;
+    box-sizing: border-box;
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    width: 100%;
+}
+
+.white_key_pressed {
+    background-color: grey;
+}
+
+.black_key {
+    pointer-events: initial;
+    background-color: black;
+    height: 100%;
+    width: calc(200% / 150);
+    box-sizing: border-box;
+    border-color: black;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.black_key_pressed {
+    background-color: grey;
+}
+
+.black_key_invisible {
+    visibility: hidden;
+}
+
+.piano {
+    box-sizing: border-box;
+    border-color: black;
+    border-style: solid;
+    border-width: 2px;
+    height: 100%;
+    position: relative;
+}
+
+.white_keys_container {
+    height: 100%;
+    display: flex;
+}
+
+.black_keys_container {
+    pointer-events: none;
+    position: absolute;
+    padding-left: calc(100% / 118);
+    padding-right: calc(100% / 118);
+    z-index: 2;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 50%;
+    display: flex;
+    justify-content: space-around;
+}
