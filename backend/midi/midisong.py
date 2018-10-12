@@ -67,8 +67,8 @@ class MidiSong:
                 self.notes[i].chord = len(self.chords)
                 i += 1
             if len(self.chords) != 0:
-                difficulty = chord_length(list_note_nums(step_notes),
-                                          list_note_nums(self.chords[-1].notes))
+                difficulty = chords_distance(list_note_nums(step_notes),
+                                             list_note_nums(self.chords[-1].notes))
             else:
                 difficulty = 0
             self.chords.append(Chord(time=step_time, notes=step_notes, difficulty=difficulty))
