@@ -5,7 +5,7 @@ from api.serializers import MidiListSerializer
 
 class MidiViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint that lists midis
     """
     queryset = Midi.objects.all()
     serializer_class = MidiListSerializer

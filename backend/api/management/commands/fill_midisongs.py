@@ -1,3 +1,4 @@
+import os
 from django.core.management import BaseCommand
 from pathlib import Path
 from mido import MidiFile
@@ -17,7 +18,7 @@ class Command(BaseCommand):
         for path in pathlist:
             # because path is object not string
             path_in_str = str(path)
-            name = ( '.'.join(path_in_str.split('.')[:-1]) ).split('/')[-1]
+            name = os.path.splitext(os.path.basename(path_in_str))[0]
             try:
                 mid = MidiFile(path_in_str)
                 for i, track in enumerate(mid.tracks):
