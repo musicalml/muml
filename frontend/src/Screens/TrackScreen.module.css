@@ -1,0 +1,15 @@
+.screen_container {
+    position: relative;
+    min-height: 100%;
+    width: 90%;
+    margin: auto;
+}
+
+.piano_container {
+    margin: auto;
+    height: 30%;
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    bottom: 10%;
+}

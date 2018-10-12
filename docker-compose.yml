@@ -30,8 +30,6 @@ services:
     restart: "no"
     image: "mhart/alpine-node"
     working_dir: "/usr/src/js"
-    ports:
-      - "3000:3000"
     volumes:
       - "./frontend:/usr/src/js"
       - "start_lock:/usr/lock/"

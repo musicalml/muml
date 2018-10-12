@@ -12,6 +12,10 @@
     background-color: grey;
 }
 
+.white_key_highlighted {
+    background-color: blue;
+}
+
 .black_key {
     pointer-events: initial;
     background-color: black;
@@ -29,6 +33,10 @@
 
 .black_key_invisible {
     visibility: hidden;
+}
+
+.black_key_highlighted {
+    background-color: blue;
 }
 
 .piano {
