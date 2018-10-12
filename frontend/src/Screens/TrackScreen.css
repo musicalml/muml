@@ -1,0 +1,9 @@
+.screen_container {
+    height: 100%;
+}
+
+.piano_container {
+    margin: auto;
+    height: 50%;
+    width: 75%;
+}

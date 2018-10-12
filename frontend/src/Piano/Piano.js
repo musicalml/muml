@@ -121,8 +121,8 @@ class Piano extends Component {
     if (message.data.length === 3) {
       if (message.data[0] === 144 && message.data[2] > 0) { // note on
         this.pianoKeyMidiEvent(message.data[1], true);
-      } else if (message.data[0] === 128 ||
-                 message.data[0] === 144 && message.data[2] === 0) { // note off
+      } else if (message.data[0] === 128 || // note off
+                (message.data[0] === 144 && message.data[2] === 0)) {
         this.pianoKeyMidiEvent(message.data[1], false);
       } else if (message.data[0] === 176) {
         const value = (message.data[2] - 64) * 3000 / 64;

@@ -1,0 +1,12 @@
+.screen_container {
+    margin: auto;
+    height: 100%;
+    width: 75%;
+    max-width: 50em;
+}
+
+.next_prev_button_container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
