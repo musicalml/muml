@@ -1,13 +1,10 @@
-from rest_framework import routers
 from api import views
 from django.urls import path, include
 
-router = routers.DefaultRouter()
-router.register(r'track', views.MidiViewSet)
 
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path(r'', include(router.urls)),
+    path('track/', views.MidiList.as_view(), name='track'),
+    path('track/<int:pk>/', views.MidiDetail.as_view(), name='track_detail'),
+    path('track/<int:pk>/compare/', views.track_compare, name='compare_midisongs'),
     path(r'drf/', include('rest_framework.urls', namespace='rest_framework')),
 ]

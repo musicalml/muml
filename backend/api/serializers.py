@@ -6,3 +6,9 @@ class MidiListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Midi
         fields = ('id', 'name')
+
+
+class MidiDetailSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Midi
+        fields = ('id', 'name', 'messages')
