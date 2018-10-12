@@ -3,5 +3,5 @@ from django.urls import re_path
 from .views import index
 
 urlpatterns = [
-    re_path('^.*$', index, name="spa.index"),
+    #re_path('^.*$', index, name="spa.index"),
 ]
