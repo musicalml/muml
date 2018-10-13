@@ -31,8 +31,8 @@ def chords_distance(a, b):
     return dist
 
 
-def msg_to_raw(msg):
-    raw = (144, msg.note, msg.velocity if msg.type == 'note_on' else 0, msg.time)
+def msg_to_raw(msg, num=0):
+    raw = [144, msg.note, msg.velocity if msg.type == 'note_on' else 0, round(msg.time * 1000), num]
     return raw
 
 
@@ -40,12 +40,13 @@ def raw_to_msg(raw):
     msg = Message('note_on' if raw[2] > 0 else 'note_off')
     msg.note = raw[1]
     msg.velocity = raw[2]
-    msg.time = raw[3]
+    msg.time = raw[3] / 1000
+    msg.channel = raw[4]
     return msg
 
 
-def track_to_raw_list(track):
-    raw_list = [msg_to_raw(x) for x in track]
+def track_to_raw_list(track, num=0):
+    raw_list = [msg_to_raw(x, num) for x in track]
     return raw_list
 
 
@@ -60,3 +61,21 @@ def purify_track(track):
         if msg.type in ['note_on', 'note_off']:
             new_track.append(deepcopy(msg))
     return new_track
+
+
+def diff_to_times(raw_list):
+    new_raw_list = deepcopy(raw_list)
+    for i in range(1, len(new_raw_list)):
+        new_raw_list[i][3] += new_raw_list[i - 1][3]
+    return new_raw_list
+
+
+def times_to_diff(raw_list):
+    new_raw_list = []
+    last = 0
+    for x in raw_list:
+        t = deepcopy(x)
+        t[3] -= last
+        last = x[3]
+        new_raw_list.append(t)
+    return new_raw_list

@@ -132,6 +132,8 @@ STATIC_ROOT = '/static/'
 
 STATIC_URL = '/static/'
 
+MIDI_IMPORT_PATH = '/usr/midi'
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10

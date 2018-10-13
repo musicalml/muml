@@ -46,12 +46,13 @@ class MidiSong:
         cur_time = 0
         for msg in self.track:
             cur_time += msg.time
-            if msg.type == 'note_on':
+            if msg.type == 'note_on' and msg.velocity > 0:
                 new_note = Note(msg.note, msg.velocity, cur_time, channel=msg.channel)
                 draft[msg.note] = new_note
-            elif msg.type == 'note_off':
-                draft[msg.note].duration = cur_time - draft[msg.note].time
-                self.notes.append(draft.pop(msg.note))
+            elif msg.type == 'note_off' or (msg.type == 'note_on' and msg.velocity == 0):
+                if msg.note in draft:
+                    draft[msg.note].duration = cur_time - draft[msg.note].time
+                    self.notes.append(draft.pop(msg.note))
             else:
                 continue
         self.notes.sort(key=lambda x: x.time)
