@@ -4,29 +4,28 @@ from pathlib import Path
 from mido import MidiFile
 from midi.miscs import track_to_raw_list, purify_track
 from api.models import Midi
+from backend.settings import MIDI_IMPORT_PATH
 
 
 class Command(BaseCommand):
-    help = 'Fills db with midis from given path (recursively)'
-
-    def add_arguments(self, parser):
-        parser.add_argument('path', type=str)
+    help = 'Fills db with midis'
 
     def handle(self, *args, **options):
-        path = options['path']
-        pathlist = Path(path).glob('**/*.mid')
+        pathlist = Path(MIDI_IMPORT_PATH).glob('**/*.mid')
         for path in pathlist:
             # because path is object not string
             path_in_str = str(path)
             name = os.path.splitext(os.path.basename(path_in_str))[0]
+            if Midi.objects.filter(name=name).count() > 0:
+                continue
+            print(name)
             try:
                 mid = MidiFile(path_in_str)
-                for i, track in enumerate(mid.tracks):
-                    raw_list = track_to_raw_list(purify_track(track))
-                    if len(raw_list) > 0:
-                        track_name = name if i == 0 else name + " Track {}".format(i + 1)
-                        print(track_name)
-                        new_midi = Midi(name=track_name, messages=raw_list)
-                        new_midi.save()
+                msgs = []
+                for msg in mid:
+                    msgs.append(msg)
+                raw_list = track_to_raw_list(purify_track(msgs), 0)
+                new_midi = Midi(name=name, messages=raw_list)
+                new_midi.save()
             except Exception as e:
                 print("Error in {}:".format(name), e)

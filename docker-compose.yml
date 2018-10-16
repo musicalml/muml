@@ -22,6 +22,7 @@ services:
       - "start_lock:/usr/lock/"
       - "./backend:/usr/src/app"
       - "./frontend:/usr/src/js"
+      - "./midi_import:/usr/midi"
     command: ["sh", "-c", "/usr/bin/run.sh"]
 
   npm:

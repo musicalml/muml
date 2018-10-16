@@ -1,5 +1,5 @@
 from api.models import Midi
-from api.serializers import MidiListSerializer, MidiDetailSerializer
+from api.serializers import MidiListSerializer, MidiDetailSerializer, MidiInfoSerializer
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -16,6 +16,11 @@ class MidiList(generics.ListCreateAPIView):
 class MidiDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Midi.objects.all()
     serializer_class = MidiDetailSerializer
+
+
+class MidiInfo(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Midi.objects.all()
+    serializer_class = MidiInfoSerializer
 
 
 @api_view(['POST'])
