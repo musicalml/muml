@@ -111,6 +111,7 @@ class TrackScreen extends Component {
   reset() {
     this.resetTrainer();
     this.setState({
+      mistakes: 0,
       currentChord: 0,
       mistakeThisChord: false,
     });
@@ -134,20 +135,30 @@ class TrackScreen extends Component {
     const correctPercent = (1 - mistakes/currentChord) * 100;
     return (
       <div className={styles.screen_container}>
-        { trackInfo !== null &&
-          <h1>{trackInfo.name}</h1>}
-        <ProgressBar max={progressBarMax} now={currentChord}/>
-        <Button onClick={this.reset}>Restart</Button>
-        { currentChord > 0 &&
-          <p>{`Correct: ${correctPercent.toFixed(0)}%`}</p>}
-        <div className={styles.piano_container}>
-          {chords !== null &&
-            <ChordTrainer
-              chords={chords}
-              onMistake={this.onMistake}
-              onCorrectChord={this.onCorrectChord}
-              ref={this.trainer}
-            />}
+        <div className={styles.stats_container}>
+          { trackInfo !== null &&
+            <h1>{trackInfo.name}</h1>}
+          { currentChord > 0 &&
+            <p>{`Correct: ${correctPercent.toFixed(0)}%`}</p>}
+          { currentChord === 0 &&
+            <p>{`Start playing!`}</p>}
+        </div>
+        <div className={styles.player_container}>
+          <div className={styles.controls_container}>
+            <div className={styles.progressbar_container}>
+              <ProgressBar max={progressBarMax} now={currentChord}/>
+            </div>
+            <Button onClick={this.reset}>Restart</Button>
+          </div>
+          <div className={styles.piano_container}>
+            {chords !== null &&
+              <ChordTrainer
+                chords={chords}
+                onMistake={this.onMistake}
+                onCorrectChord={this.onCorrectChord}
+                ref={this.trainer}
+              />}
+          </div>
         </div>
       </div>
     );

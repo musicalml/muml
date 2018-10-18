@@ -20,18 +20,74 @@ class PianoKeyboard extends Component {
    */
   constructor(props) {
     super(props);
+    this.state = {
+      pressedScreenKeys: [],
+      stickyKey: false,
+    };
     this.keyToState = this.keyToState.bind(this);
     this.whiteKeys = keysWithFakes.filter(isWhite)
         .map(this.keyToState);
     this.blackKeys = keysWithFakes.filter(isBlack)
         .map(this.keyToState);
     this.buttonToComponent = this.buttonToComponent.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
   }
 
   static propTypes = {
     onMouseEvent: PropTypes.func,
     pressedKeys: PropTypes.array,
     highlightKeys: PropTypes.array,
+  }
+
+  /**
+   * Sets event listeners for shift button.
+   */
+  componentDidMount() {
+    document.addEventListener('keydown', this.onKeyDown);
+    document.addEventListener('keyup', this.onKeyUp);
+  }
+
+  /**
+   * Unsets event listeners for shift button.
+   */
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.onKeyDown);
+    document.removeEventListener('keyup', this.onKeyUp);
+  }
+
+  /**
+   * KeyDown handler, sets "shift down" flag.
+   * @param {Object} e - the event.
+   */
+  onKeyDown(e) {
+    if (e.key !== 'Shift') {
+      return;
+    }
+    this.setState({
+      stickyKey: true,
+    });
+  }
+
+  /**
+   * KeyUp handler, unsets "shift down" flag and unpresses all the buttons.
+   * @param {Object} e - the event.
+   */
+  onKeyUp(e) {
+    if (e.key !== 'Shift') {
+      return;
+    }
+    this.setState({
+      stickyKey: false,
+    });
+    this.state.pressedScreenKeys.forEach((key) => {
+      if (this.props.onMouseEvent) {
+        this.props.onMouseEvent(key, false);
+      }
+    });
+    this.setState({
+      pressedScreenKeys: [],
+    });
   }
 
   /**
@@ -56,8 +112,23 @@ class PianoKeyboard extends Component {
    * @param {Boolean} active - whether the key is pressed or depressed
    */
   pianoKeyMouseEvent(key, active) {
-    if (this.props.onMouseEvent) {
-      this.props.onMouseEvent(key, active);
+    if (active) {
+      if (this.props.onMouseEvent) {
+        this.props.onMouseEvent(key, active);
+      }
+      this.setState({
+        pressedScreenKeys: [...this.state.pressedScreenKeys, key],
+      });
+    } else {
+      if (!this.state.stickyKey) {
+        if (this.props.onMouseEvent) {
+          this.props.onMouseEvent(key, active);
+        }
+        this.setState({
+          pressedScreenKeys: this.state.pressedScreenKeys
+              .filter((scrKey) => (scrKey !== key)),
+        });
+      }
     }
   }
 

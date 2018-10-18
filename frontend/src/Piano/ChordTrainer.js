@@ -38,44 +38,43 @@ class ChordTrainer extends Component {
    * @param {Boolean} active - whether the key is pressed or depressed.
    */
   onPianoKeyEvent(key, active) {
-    const state = this.state;
+    const state = {...this.state};
     const chord = this.chords[this.state.chord];
     if (active) {
       state.keysHeld = [
         ...this.state.keysHeld,
         key,
       ];
-      if (chord.includes(key)) {
-        state.keysHeldForChord = [
-          ...this.state.keysHeldForChord,
-          key,
-        ];
-      } else {
+      if (!chord.includes(key)) {
         state.mistakes++;
         this.onMistake(key);
+      }
+      state.keysHeldForChord = [
+        ...this.state.keysHeldForChord,
+        key,
+      ];
+      const highlightKeys = chord.sort();
+      const sortedKeysHeld = state.keysHeldForChord.sort();
+      if (highlightKeys.join(',') === sortedKeysHeld.join(',')) {
+        state.chord++;
+        state.keysHeldForChord = [];
+        this.onCorrectChord();
+        if (state.chord === this.chords.length) {
+          if (this.props.onFinishTrack) {
+            this.props.onFinishTrack(state.mistakes);
+          }
+          state.chord = 0;
+        }
       }
     } else {
       state.keysHeld =
         state.keysHeld.filter((stateKey) => (stateKey !== key));
-      if (state.keysHeldForChord.includes(key)) {
+      if (state.keysHeldForChord.includes(key) && chord.includes(key)) {
         state.mistakes++;
         this.onMistake(key);
-        state.keysHeldForChord =
-          state.keysHeldForChord.filter((stateKey) => (stateKey !== key));
       }
-    }
-    const highlightKeys = chord.sort();
-    const sortedKeysHeld = this.state.keysHeld.sort();
-    if (highlightKeys.join(',') === sortedKeysHeld.join(',')) {
-      state.chord++;
-      state.keysHeldForChord = [];
-      this.onCorrectChord();
-      if (state.chord === this.chords.length) {
-        if (this.props.onFinishTrack) {
-          this.props.onFinishTrack(state.mistakes);
-        }
-        state.chord = 0;
-      }
+      state.keysHeldForChord =
+        state.keysHeldForChord.filter((stateKey) => (stateKey !== key));
     }
     this.setState(state);
   }
