@@ -29,7 +29,7 @@ class ChordTrainer extends Component {
     onFinishTrack: PropTypes.func,
     onCorrectChord: PropTypes.func,
     onMistake: PropTypes.func,
-  }
+  };
 
   /**
    * Event when a piano key is pressed/depressed. Held keys are updated and

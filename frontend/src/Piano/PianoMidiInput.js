@@ -21,25 +21,30 @@ class PianoMidiInput extends Component {
   static propTypes = {
     onMidiKeyEvent: PropTypes.func,
     onMidiValueUpdate: PropTypes.func,
-  }
+  };
 
   /**
    * A callback for midi messages
    * @param {MidiMessage} message - the midi message
    */
   onMidiMessage(message) {
-    if (message.data.length === 1 && message.data[0] === 254) {
+    const length = message.data.length;
+    const code = message.data[0];
+    const key = length > 1 ? message.data[1] : undefined;
+    const velocity = length > 2 ? message.data[2] : undefined;
+
+    if (length === 1 && code === 254) {
       return;
     }
 
-    if (message.data.length === 3) {
-      if (message.data[0] === 144 && message.data[2] > 0) { // note on
-        this.pianoKeyMidiEvent(message.data[1], true);
-      } else if (message.data[0] === 128 || // note off
-                (message.data[0] === 144 && message.data[2] === 0)) {
-        this.pianoKeyMidiEvent(message.data[1], false);
-      } else if (message.data[0] === 176) {
-        const value = (message.data[2] - 64) * 3000 / 64;
+    if (length === 3) {
+      if (code === 144 && velocity > 0) { // note on
+        this.pianoKeyMidiEvent(key, true);
+      } else if (code === 128 || // note off
+                (code === 144 && velocity === 0)) {
+        this.pianoKeyMidiEvent(key, false);
+      } else if (code === 176) {
+        const value = (velocity - 64) * 3000 / 64;
         if (this.props.onMidiValueUpdate) {
           this.props.onMidiValueUpdate('detune', value);
         }

@@ -38,7 +38,7 @@ class Piano extends Component {
   static propTypes = {
     onPianoKeyEvent: PropTypes.func,
     highlightKeys: PropTypes.array,
-  }
+  };
 
   /**
    * Marks a piano key as being pressed or depressed and triggers

@@ -38,7 +38,7 @@ class PianoKeyboard extends Component {
     onMouseEvent: PropTypes.func,
     pressedKeys: PropTypes.array,
     highlightKeys: PropTypes.array,
-  }
+  };
 
   /**
    * Sets event listeners for shift button.

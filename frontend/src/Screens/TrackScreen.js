@@ -39,7 +39,7 @@ class TrackScreen extends Component {
 
   static propTypes = {
     match: PropTypes.object,
-  }
+  };
 
   /**
    * Fetches the track.
