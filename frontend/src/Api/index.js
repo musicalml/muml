@@ -21,9 +21,7 @@ const apiCall = (method, url, params) => {
       const requestUrl = `${url}?${query}`;
       return {data, requestUrl};
     } else {
-      const requestUrl = url;
-      const data = params;
-      return {data, requestUrl};
+      return {params, url};
     }
   })();
   return fetch(requestUrl, {

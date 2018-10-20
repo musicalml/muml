@@ -25,7 +25,7 @@ class PianoKey extends Component {
     className: PropTypes.string,
     onMouseDown: PropTypes.func,
     onMouseUp: PropTypes.func,
-  }
+  };
 
   /**
    * A callback for mousedown. Registers mouseup callback with the document
