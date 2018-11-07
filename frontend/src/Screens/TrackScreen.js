@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import {ProgressBar, Button} from 'react-bootstrap';
 
 import ChordTrainer from 'Piano/ChordTrainer';
+import NoteStream from 'Piano/NoteStream'
 import {midiCodeToKey} from 'Piano/misc';
 
-import {getChords, getTrackInfo} from 'Api';
+import {getChords, getTrackInfo, getNotes} from 'Api';
 
 import styles from './TrackScreen.module.css';
 
@@ -21,6 +22,9 @@ class TrackScreen extends Component {
     super(props);
     const {trackId} = this.props.match.params;
     this.state = {
+      notes: null,
+      time: 0,
+      last: null,
       chords: null,
       trackId: trackId ? trackId : null,
       currentChord: 0,
@@ -29,12 +33,15 @@ class TrackScreen extends Component {
       trackInfo: null,
     };
     this.onTrackLoaded = this.onTrackLoaded.bind(this);
+    this.onNotesLoaded = this.onNotesLoaded.bind(this);
     this.onTrackInfoLoaded = this.onTrackInfoLoaded.bind(this);
     this.resetMistakeMessage = this.resetMistakeMessage.bind(this);
     this.onMistake = this.onMistake.bind(this);
     this.reset = this.reset.bind(this);
     this.onCorrectChord = this.onCorrectChord.bind(this);
+    this.onTick = this.onTick.bind(this);
     this.trainer = React.createRef();
+    this.noteStream = React.createRef();
   }
 
   static propTypes = {
@@ -48,7 +55,17 @@ class TrackScreen extends Component {
     if (this.state.trackId !== null) {
       getChords(this.state.trackId).then(this.onTrackLoaded);
       getTrackInfo(this.state.trackId).then(this.onTrackInfoLoaded);
+      getNotes(this.state.trackId).then(this.onNotesLoaded);
+      // this.timerID = setInterval(
+      //   this.onTick,
+      //   16
+      // );
+      requestAnimationFrame(this.onTick);
     }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
   }
 
   /**
@@ -57,7 +74,14 @@ class TrackScreen extends Component {
    */
   onTrackLoaded(response) {
     this.setState({
-      chords: response.map((chord)=>(chord.map(midiCodeToKey))),
+      chords: response.map((chord)=>(chord['notes'].map(midiCodeToKey))),
+      chord_times: response.map((chord)=>(chord['time']))
+    });
+  }
+
+  onNotesLoaded(response) {
+    this.setState({
+      notes: response,
     });
   }
 
@@ -69,6 +93,22 @@ class TrackScreen extends Component {
     this.setState({
       trackInfo: response,
     });
+  }
+
+  onTick(time) {
+    const scaled_time = time / 1000;
+    if (!this.state.last)
+      this.setState({last : scaled_time});
+    const diff = scaled_time - this.state.last;
+    if( this.noteStream.current ) {
+      if( this.state.time + diff <= this.state.chord_times[this.state.currentChord]) {
+        const new_time = this.state.time + diff;
+        this.setState({time: new_time});
+      }
+      this.noteStream.current.drawNotes();
+    }
+    this.setState({last: scaled_time});
+    requestAnimationFrame(this.onTick);
   }
 
   /**
@@ -130,7 +170,7 @@ class TrackScreen extends Component {
    */
   render() {
     const {chords, currentChord,
-      mistakes, trackInfo} = this.state;
+      mistakes, trackInfo, notes, time} = this.state;
     const progressBarMax = chords !== null ? chords.length : 0;
     const correctPercent = (1 - mistakes/currentChord) * 100;
     return (
@@ -149,6 +189,15 @@ class TrackScreen extends Component {
               <ProgressBar max={progressBarMax} now={currentChord}/>
             </div>
             <Button onClick={this.reset}>Restart</Button>
+          </div>
+          <div className={styles.notestream_container}>
+            {notes !== null &&
+            <NoteStream
+              ref={this.noteStream}
+              notes={notes}
+              time={time}
+              timeScale = {2}
+            />}
           </div>
           <div className={styles.piano_container}>
             {chords !== null &&

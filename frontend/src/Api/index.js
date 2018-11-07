@@ -51,6 +51,8 @@ const compareTracks = (trackId, data)=>(
   apiCall('POST', `${baseApiUrl}/track/${trackId}/compare/`));
 const getChords = (trackId)=>(
   apiCall('GET', `${baseApiUrl}/track/${trackId}/chords/`));
+const getNotes = (trackId)=>(
+  apiCall('GET', `${baseApiUrl}/track/${trackId}/notes/`));
 
 export default apiCall;
-export {getChords, getTracks, getTrackInfo, compareTracks};
+export {getChords, getTracks, getTrackInfo, getNotes, compareTracks};

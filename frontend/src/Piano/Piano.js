@@ -29,7 +29,7 @@ class Piano extends Component {
       buttons: keysWithoutFakes.map(keysToButtons),
     };
     this.synth = new Tone.PolySynth(6, Tone.Synth).toMaster();
-    this.synth.set('detune', 200);
+    //this.synth.set('detune', 200);
     this.pianoKeyMouseEvent = this.togglePianoKey.bind(this, 'mouse');
     this.pianoKeyMidiEvent = this.togglePianoKey.bind(this, 'midi');
     this.onMidiValueUpdate = this.onMidiValueUpdate.bind(this);
