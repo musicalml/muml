@@ -2,18 +2,18 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {ProgressBar, Button} from 'react-bootstrap';
 
-import ChordTrainer from 'Piano/ChordTrainer';
 import NoteStream from 'Piano/NoteStream'
 import {midiCodeToKey} from 'Piano/misc';
 
 import {getChords, getTrackInfo, getNotes} from 'Api';
 
 import styles from './TrackScreen.module.css';
+import Piano from "../Piano";
 
 /**
  * A screen for playing a song or free play.
  */
-class TrackScreen extends Component {
+class LearningScreen extends Component {
   /**
    * Default constructor.
    * @param {Object} props - the props.
@@ -22,15 +22,20 @@ class TrackScreen extends Component {
     super(props);
     const {trackId} = this.props.match.params;
     this.state = {
+      //track info
       notes: null,
+      chords: null,
+      trackInfo: null,
+      trackId: trackId ? trackId : null,
+      //time
       time: 0,
       last: null,
-      chords: null,
-      trackId: trackId ? trackId : null,
+      //learning
       currentChord: 0,
+      keysHeld: [],
+      keysHeldForChord: [],
       mistakeThisChord: false,
       mistakes: 0,
-      trackInfo: null,
     };
     this.onTrackLoaded = this.onTrackLoaded.bind(this);
     this.onNotesLoaded = this.onNotesLoaded.bind(this);
@@ -40,7 +45,8 @@ class TrackScreen extends Component {
     this.reset = this.reset.bind(this);
     this.onCorrectChord = this.onCorrectChord.bind(this);
     this.onTick = this.onTick.bind(this);
-    this.trainer = React.createRef();
+    this.onPianoKeyEvent = this.onPianoKeyEvent.bind(this);
+    this.resetTrainer = this.resetTrainer.bind(this);
     this.noteStream = React.createRef();
   }
 
@@ -61,7 +67,6 @@ class TrackScreen extends Component {
   }
 
   componentWillUnmount() {
-    clearInterval(this.timerID);
   }
 
   /**
@@ -154,15 +159,73 @@ class TrackScreen extends Component {
       time: 0,
       last: null,
     });
-
   }
 
   /**
    * Resets the trainer component.
    */
-  resetTrainer() {
-    this.trainer.current.reset();
+
+  /**
+   * Event when a piano key is pressed/depressed. Held keys are updated and
+   * checked against pending chord.
+   * @param {String} key - key in musical notation.
+   * @param {Boolean} active - whether the key is pressed or depressed.
+   */
+  onPianoKeyEvent(key, active) {
+    const state = {...this.state};
+    const chord = state.chords[this.state.currentChord];
+    if (active) {
+      state.keysHeld = [
+        ...this.state.keysHeld,
+        key,
+      ];
+      if (!chord.includes(key)) {
+        state.mistakes++;
+        this.onMistake(key);
+      }
+      state.keysHeldForChord = [
+        ...this.state.keysHeldForChord,
+        key,
+      ];
+      const highlightKeys = chord.sort();
+      const sortedKeysHeld = state.keysHeldForChord.sort();
+      if (highlightKeys.join(',') === sortedKeysHeld.join(',')) {
+        state.currentChord++;
+        state.keysHeldForChord = [];
+        this.onCorrectChord();
+        if (state.currentChord === state.chords.length) {
+          if (this.props.onFinishTrack) {
+            this.props.onFinishTrack(state.mistakes);
+          }
+          state.currentChord = 0;
+        }
+      }
+    } else {
+      state.keysHeld =
+        state.keysHeld.filter((stateKey) => (stateKey !== key));
+      if (state.keysHeldForChord.includes(key) && chord.includes(key)) {
+        state.mistakes++;
+        this.onMistake(key);
+      }
+      state.keysHeldForChord =
+        state.keysHeldForChord.filter((stateKey) => (stateKey !== key));
+    }
+    this.setState(state);
   }
+
+  /**
+   * Resets the component if needed. Meant to be called using ref.
+   */
+  resetTrainer() {
+    this.setState({
+      ...this.state,
+      chord: 0,
+      keysHeld: [],
+      mistakes: 0,
+      keysHeldForChord: [],
+    });
+  }
+
 
   /**
    * Renders the piano and controls.
@@ -173,6 +236,7 @@ class TrackScreen extends Component {
       mistakes, trackInfo, notes, time} = this.state;
     const progressBarMax = chords !== null ? chords.length : 0;
     const correctPercent = (1 - mistakes/currentChord) * 100;
+    const highlightKeys = chords !== null ? chords[currentChord] : [];
     return (
       <div className={styles.screen_container}>
         <div className={styles.stats_container}>
@@ -201,12 +265,9 @@ class TrackScreen extends Component {
           </div>
           <div className={styles.piano_container}>
             {chords !== null &&
-              <ChordTrainer
-                chords={chords}
-                onMistake={this.onMistake}
-                onCorrectChord={this.onCorrectChord}
-                ref={this.trainer}
-              />}
+            <Piano highlightKeys={highlightKeys}
+                   onPianoKeyEvent={this.onPianoKeyEvent}
+            />}
           </div>
         </div>
       </div>
@@ -214,4 +275,4 @@ class TrackScreen extends Component {
   }
 }
 
-export default TrackScreen;
+export default LearningScreen;

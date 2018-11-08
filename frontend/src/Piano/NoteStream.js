@@ -8,7 +8,7 @@ class NoteStream extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      notes : props.notes.sort((a,b) => a[1] - b[1]),
+      notes : props.notes.sort((a,b) => a[1] - b[1]), //note, start, finish
       time: props.time,
       hidden_notes: 0
     };
@@ -24,6 +24,12 @@ class NoteStream extends Component {
   }
 
   drawNotes() {
+    var cur_notes;
+    if( this.props.change !== null ) {
+      cur_notes = this.props.notes;
+    } else {
+      cur_notes = this.state.notes;
+    }
     this.ctx.clearRect(0, 0, 1924, 1000);
 
     var i = this.state.hidden_notes;
@@ -31,20 +37,20 @@ class NoteStream extends Component {
     var new_i = i;
     var limit = 1000;
     while( true ) {
-      if( i >= this.state.notes.length ) {
+      if( i >= cur_notes.length ) {
         break;
       }
-      if ( this.inBounds(this.state.notes[i][1]) || this.inBounds(this.state.notes[i][2])) {
+      if ( this.inBounds(cur_notes[i][1]) || this.inBounds(cur_notes[i][2])) {
         if( !foundStart ) {
           new_i = i;
           foundStart = true;
         }
-        limit = this.state.notes[i][2];
-        const low = (this.state.notes[i][1] - this.props.time) / this.props.timeScale * 1000;
-        const high = (this.state.notes[i][2] - this.props.time) / this.props.timeScale * 1000;
-        this.drawNote(this.state.notes[i][0], low, high);
+        limit = cur_notes[i][2];
+        const low = (cur_notes[i][1] - this.props.time) / this.props.timeScale * 1000;
+        const high = (cur_notes[i][2] - this.props.time) / this.props.timeScale * 1000;
+        this.drawNote(cur_notes[i][0], low, high);
       } else {
-        if( foundStart && this.state.notes[i][2] >= limit ) {
+        if( foundStart && cur_notes[i][2] >= limit ) {
           break;
         }
       }
@@ -52,6 +58,9 @@ class NoteStream extends Component {
 
     }
     this.setState({hidden_notes : new_i});
+    if( this.props.changeFrom !== null ) {
+      this.setState({notes : cur_notes});
+    }
   }
 
   drawNote(note, low, high) {
