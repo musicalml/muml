@@ -56,10 +56,6 @@ class TrackScreen extends Component {
       getChords(this.state.trackId).then(this.onTrackLoaded);
       getTrackInfo(this.state.trackId).then(this.onTrackInfoLoaded);
       getNotes(this.state.trackId).then(this.onNotesLoaded);
-      // this.timerID = setInterval(
-      //   this.onTick,
-      //   16
-      // );
       requestAnimationFrame(this.onTick);
     }
   }
@@ -150,11 +146,15 @@ class TrackScreen extends Component {
    */
   reset() {
     this.resetTrainer();
+    this.noteStream.current.reset();
     this.setState({
       mistakes: 0,
       currentChord: 0,
       mistakeThisChord: false,
+      time: 0,
+      last: null,
     });
+
   }
 
   /**
@@ -196,7 +196,7 @@ class TrackScreen extends Component {
               ref={this.noteStream}
               notes={notes}
               time={time}
-              timeScale = {2}
+              timeScale={2}
             />}
           </div>
           <div className={styles.piano_container}>

@@ -15,6 +15,7 @@ class NoteStream extends Component {
     this.drawNotes = this.drawNotes.bind(this);
     this.inBounds = this.inBounds.bind(this);
     this.drawNote = this.drawNote.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   componentDidMount() {
@@ -105,6 +106,10 @@ class NoteStream extends Component {
 
   inBounds(t) {
     return (t >= this.props.time && t <= this.props.time + this.props.timeScale )
+  }
+
+  reset() {
+    this.setState({hidden_notes : 0})
   }
 
 
