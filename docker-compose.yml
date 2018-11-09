@@ -43,6 +43,15 @@ services:
       - "8080:80"
     volumes:
       - "static:/www/static"
+      
+  ml:
+    tty: true
+    stdin_open: true
+    restart: always
+    build: ./ml
+    volumes:
+      - "./ml:/app/ml"
+    command: ["/bin/bash"]
 
 volumes:
   static:
