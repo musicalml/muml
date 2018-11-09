@@ -25,7 +25,7 @@ SECRET_KEY = 'pduqmeqvluvsay+)!q9va+z8@(orxny6nenlam77@-qs=x&d#0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -131,6 +131,8 @@ STATICFILES_DIRS = [
 STATIC_ROOT = '/static/'
 
 STATIC_URL = '/static/'
+
+MIDI_IMPORT_PATH = '/usr/midi'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',

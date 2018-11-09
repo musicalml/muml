@@ -1,10 +1,10 @@
-.App {
+.app {
   text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.piano_container {
-    margin: auto;
-    padding: 0 0;
-    width: 75%;
-    height: 50%;
+.screen_container {
+    flex: 1;
 }
