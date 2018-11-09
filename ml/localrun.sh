@@ -4,5 +4,5 @@ sudo docker run \
 	-it \
 	--rm \
 	-v `pwd`:/app/ml \
-	ml /bin/bash
+	muml_ml /bin/bash
 
