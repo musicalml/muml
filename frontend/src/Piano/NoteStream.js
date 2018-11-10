@@ -1,69 +1,46 @@
 import React, {Component} from 'react';
+import { Stage, Layer, Rect } from 'react-konva';
 const bw = 0.72;
 const shift = [0, 1 - bw/2, 1, 2 - bw/2, 2, 3, 4 - bw/2, 4, 5 - bw/2, 5, 6 - bw/2, 6];
 const black_keys = [1, 3, 6, 8, 10];
 const R = 5;
 
-class NoteStream extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      notes : props.notes.sort((a,b) => a[1] - b[1]), //note, start, finish
-      time: props.time,
-      hidden_notes: 0
-    };
-    this.drawNotes = this.drawNotes.bind(this);
-    this.inBounds = this.inBounds.bind(this);
-    this.drawNote = this.drawNote.bind(this);
-    this.reset = this.reset.bind(this);
+class PureCanvas extends React.Component {
+  shouldComponentUpdate() {
+    return false;
   }
 
-  componentDidMount() {
-    const canvas = this.refs.canvas;
-    this.ctx = canvas.getContext("2d");
+  render() {
+    return (
+      <canvas
+        width="1924"
+        height="1000"
+        ref={node =>
+          node ? this.props.contextRef(node.getContext('2d')) : null
+        }
+      />
+    );
+  }
+}
+
+class NoteStreamCanvas extends Component {
+  constructor(props) {
+    super(props);
+    this.drawNote = this.drawNote.bind(this);
+    this.saveContext = this.saveContext.bind(this);
+  }
+
+  saveContext(ctx) {
+    this.ctx = ctx;
+    this.width = this.ctx.canvas.width;
+    this.height = this.ctx.canvas.height;
   }
 
   componentDidUpdate() {
-  }
-
-
-  drawNotes() {
-    let cur_notes;
-    if( this.props.change !== null ) {
-      cur_notes = this.props.notes;
-    } else {
-      cur_notes = this.state.notes;
-    }
+    const { notesToDraw } = this.props;
     this.ctx.clearRect(0, 0, 1924, 1000);
-
-    let i = this.state.hidden_notes;
-    let foundStart = false;
-    let new_i = i;
-    let limit = 1000;
-    while( true ) {
-      if( i >= cur_notes.length ) {
-        break;
-      }
-      if ( this.inBounds(cur_notes[i][1], cur_notes[i][2]) ) {
-        if( !foundStart ) {
-          new_i = i;
-          foundStart = true;
-        }
-        limit = cur_notes[i][2];
-        const low = (cur_notes[i][1] - this.props.time) / this.props.timeScale * 1000;
-        const high = (cur_notes[i][2] - this.props.time) / this.props.timeScale * 1000;
-        this.drawNote(cur_notes[i][0], low, high);
-      } else {
-        if( foundStart && cur_notes[i][1] >= limit ) {
-          break;
-        }
-      }
-      i++;
-
-    }
-    this.setState({hidden_notes : new_i});
-    if( this.props.changeFrom !== null ) {
-      this.setState({notes : cur_notes});
+    for( let i = 0; i < notesToDraw.length; ++i ) {
+      this.drawNote(notesToDraw[i][0], notesToDraw[i][1], notesToDraw[i][2])
     }
   }
 
@@ -117,6 +94,66 @@ class NoteStream extends Component {
 
   }
 
+  render() {
+    return <PureCanvas contextRef={this.saveContext} />;
+  }
+}
+
+class NoteStream extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      notes : props.notes.sort((a,b) => a[1] - b[1]), //note, start, finish
+      notesToDraw : [],
+      time: props.time,
+      hidden_notes: 0
+    };
+    this.drawNotes = this.drawNotes.bind(this);
+    this.inBounds = this.inBounds.bind(this);
+    this.reset = this.reset.bind(this);
+  }
+
+
+  drawNotes() {
+    let cur_notes;
+    if( this.props.change !== null ) {
+      cur_notes = this.props.notes;
+    } else {
+      cur_notes = this.state.notes;
+    }
+
+    let i = this.state.hidden_notes;
+    let foundStart = false;
+    let new_i = i;
+    let limit = 1000;
+    let notesToDraw = [];
+    while( true ) {
+      if( i >= cur_notes.length ) {
+        break;
+      }
+      if ( this.inBounds(cur_notes[i][1], cur_notes[i][2]) ) {
+        if( !foundStart ) {
+          new_i = i;
+          foundStart = true;
+        }
+        limit = cur_notes[i][2];
+        const low = (cur_notes[i][1] - this.props.time) / this.props.timeScale * 1000;
+        const high = (cur_notes[i][2] - this.props.time) / this.props.timeScale * 1000;
+        notesToDraw.push([cur_notes[i][0], low, high]);
+      } else {
+        if( foundStart && cur_notes[i][1] >= limit ) {
+          break;
+        }
+      }
+      i++;
+
+    }
+    this.setState({hidden_notes : new_i, notesToDraw : notesToDraw});
+    if( this.props.changeFrom !== null ) {
+      this.setState({notes : cur_notes});
+    }
+  }
+
   inBounds(l, t) {
     return !(l > this.props.time + this.props.timeScale || t < this.props.time);
   }
@@ -128,7 +165,8 @@ class NoteStream extends Component {
 
   render() {
     return(
-        <canvas ref="canvas" width={1924} height={1000} />
+        //<canvas ref="canvas" width={1924} height={1000} />
+      <NoteStreamCanvas notesToDraw={this.state.notesToDraw} />
     )
   }
 }
