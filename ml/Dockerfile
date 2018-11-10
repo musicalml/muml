@@ -5,6 +5,7 @@ FROM python:3.5
 WORKDIR /app
 COPY requirements.txt build.sh ./build/
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app/ml/src
 
 RUN apt-get update 
 RUN apt-get --assume-yes install apt-utils
