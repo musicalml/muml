@@ -106,7 +106,7 @@ class LearningScreen extends Component {
         const new_time = this.state.time + diff;
         this.setState({time: new_time});
       }
-      this.noteStream.current.drawNotes();
+      //this.noteStream.current.drawNotes();
     }
     this.setState({last: scaled_time});
     requestAnimationFrame(this.onTick);

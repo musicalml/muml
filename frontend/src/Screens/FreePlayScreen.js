@@ -36,8 +36,8 @@ class FreePlayScreen extends Component {
     if( this.noteStream.current ) {
       const new_time = this.state.time + diff;
 
-      var unfinished = this.state.unfinished;
-      var notes = this.state.notes.slice();
+      let unfinished = this.state.unfinished;
+      let notes = this.state.notes.slice();
       for( const [key, value] of Object.entries(unfinished)) {
         notes[value][2] = new_time + this.state.timeScale;
 

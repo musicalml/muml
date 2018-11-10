@@ -69,7 +69,7 @@ class TrackSelectionScreen extends Component {
         {tracks === [] && 'No tracks found...'}
         <ListGroup>
           {tracks && tracks.map((track) => (
-            <ListGroupItem href={`/play/${track.id}`} key={track.id}>
+            <ListGroupItem href={`/tracks/${track.id}`} key={track.id}>
               {track.name}
             </ListGroupItem>
           ))}

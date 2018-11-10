@@ -23,8 +23,12 @@ class NoteStream extends Component {
     this.ctx = canvas.getContext("2d");
   }
 
+  componentDidUpdate() {
+  }
+
+
   drawNotes() {
-    var cur_notes;
+    let cur_notes;
     if( this.props.change !== null ) {
       cur_notes = this.props.notes;
     } else {
@@ -32,15 +36,15 @@ class NoteStream extends Component {
     }
     this.ctx.clearRect(0, 0, 1924, 1000);
 
-    var i = this.state.hidden_notes;
-    var foundStart = false;
-    var new_i = i;
-    var limit = 1000;
+    let i = this.state.hidden_notes;
+    let foundStart = false;
+    let new_i = i;
+    let limit = 1000;
     while( true ) {
       if( i >= cur_notes.length ) {
         break;
       }
-      if ( this.inBounds(cur_notes[i][1]) || this.inBounds(cur_notes[i][2])) {
+      if ( this.inBounds(cur_notes[i][1], cur_notes[i][2]) ) {
         if( !foundStart ) {
           new_i = i;
           foundStart = true;
@@ -50,7 +54,7 @@ class NoteStream extends Component {
         const high = (cur_notes[i][2] - this.props.time) / this.props.timeScale * 1000;
         this.drawNote(cur_notes[i][0], low, high);
       } else {
-        if( foundStart && cur_notes[i][2] >= limit ) {
+        if( foundStart && cur_notes[i][1] >= limit ) {
           break;
         }
       }
@@ -88,8 +92,8 @@ class NoteStream extends Component {
     if (typeof radius === 'number') {
       radius = {tl: radius, tr: radius, br: radius, bl: radius};
     } else {
-      var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-      for (var side in defaultRadius) {
+      let defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+      for (let side in defaultRadius) {
         radius[side] = radius[side] || defaultRadius[side];
       }
     }
@@ -113,8 +117,8 @@ class NoteStream extends Component {
 
   }
 
-  inBounds(t) {
-    return (t >= this.props.time && t <= this.props.time + this.props.timeScale )
+  inBounds(l, t) {
+    return !(l > this.props.time + this.props.timeScale || t < this.props.time);
   }
 
   reset() {

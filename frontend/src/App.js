@@ -5,6 +5,8 @@ import {BrowserRouter, Route, Redirect} from 'react-router-dom';
 import TrackSelectionScreen from 'Screens/TrackSelectionScreen';
 import LearningScreen from 'Screens/LearningScreen';
 import FreePlayScreen from 'Screens/FreePlayScreen';
+import TrackScreen from 'Screens/TrackScreen';
+import ListenScreen from 'Screens/ListenScreen';
 
 import './App.css';
 
@@ -38,9 +40,11 @@ class App extends Component {
           </Navbar>
           <div className={'screen_container'}>
             <Route exact path='/' component={()=>(<Redirect to='/tracks' />)}/>
-            <Route path='/tracks' component={TrackSelectionScreen}/>
+            <Route exact path='/tracks' component={TrackSelectionScreen}/>
+            <Route exact path='/tracks/:trackId' component={TrackScreen}/>
             <Route path='/play/:trackId' component={LearningScreen}/>
-            <Route path='/play' component={FreePlayScreen}/>
+            <Route path='/listen/:trackId' component={ListenScreen}/>
+            <Route exact path='/play' component={FreePlayScreen}/>
           </div>
         </div>
       </BrowserRouter>

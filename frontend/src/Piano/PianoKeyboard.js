@@ -141,7 +141,7 @@ class PianoKeyboard extends Component {
     return (
       <PianoKey
         black={isBlack(button.key)}
-        highlight={this.props.highlightKeys.includes(button.key)}
+        highlight={(this.props.highlightKeys) ? this.props.highlightKeys.includes(button.key) : false}
         pressed={this.props.pressedKeys.includes(button.key)}
         invisible={button.key.includes('Fake')}
         onMouseDown={button.onMouseDown}
