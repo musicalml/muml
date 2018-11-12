@@ -12,9 +12,7 @@
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.0.4",
-    "tone": "^0.12.80",
-    "konva" : "2.4.2",
-    "react-konva": "16.6.11"
+    "tone": "^0.12.80"
   },
   "scripts": {
     "start": "react-scripts start",

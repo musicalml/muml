@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import { Stage, Layer, Rect } from 'react-konva';
 const bw = 0.72;
 const shift = [0, 1 - bw/2, 1, 2 - bw/2, 2, 3, 4 - bw/2, 4, 5 - bw/2, 5, 6 - bw/2, 6];
 const black_keys = [1, 3, 6, 8, 10];
@@ -37,7 +36,7 @@ class NoteStreamCanvas extends Component {
   }
 
   componentDidUpdate() {
-    const { notesToDraw } = this.props;
+    const { notesToDraw} = this.props;
     this.ctx.clearRect(0, 0, 1924, 1000);
     for( let i = 0; i < notesToDraw.length; ++i ) {
       this.drawNote(notesToDraw[i][0], notesToDraw[i][1], notesToDraw[i][2])
@@ -46,7 +45,7 @@ class NoteStreamCanvas extends Component {
 
   drawNote(note, low, high) {
     const x = this.noteToX(note);
-    const color = (black_keys.includes(note%12)) ? "GoldenRod" : "Gold";
+    const color = (black_keys.includes(note%12)) ? "DarkSlateGray" : "DarkGreen";
     const width = (black_keys.includes(note%12)) ? 37*bw : 37;
     this.ctx.fillStyle = color;
     this.roundRect(this.ctx, x, 1000-high, width, high-low, R, true, true)
@@ -106,39 +105,40 @@ class NoteStream extends Component {
       notes : props.notes.sort((a,b) => a[1] - b[1]), //note, start, finish
       notesToDraw : [],
       time: props.time,
-      hidden_notes: 0
+      hidden_notes: 0,
     };
     this.drawNotes = this.drawNotes.bind(this);
     this.inBounds = this.inBounds.bind(this);
     this.reset = this.reset.bind(this);
   }
 
-
-  drawNotes() {
+  drawNotes(new_time, time_scale) {
     let cur_notes;
     if( this.props.change !== null ) {
       cur_notes = this.props.notes;
     } else {
       cur_notes = this.state.notes;
     }
+    console.log(new_time, cur_notes);
 
     let i = this.state.hidden_notes;
     let foundStart = false;
     let new_i = i;
     let limit = 1000;
     let notesToDraw = [];
+
     while( true ) {
       if( i >= cur_notes.length ) {
         break;
       }
-      if ( this.inBounds(cur_notes[i][1], cur_notes[i][2]) ) {
+      if ( this.inBounds(cur_notes[i][1], cur_notes[i][2], new_time, time_scale) ) {
         if( !foundStart ) {
           new_i = i;
           foundStart = true;
         }
         limit = cur_notes[i][2];
-        const low = (cur_notes[i][1] - this.props.time) / this.props.timeScale * 1000;
-        const high = (cur_notes[i][2] - this.props.time) / this.props.timeScale * 1000;
+        const low = (cur_notes[i][1] - new_time) / time_scale * 1000;
+        const high = (cur_notes[i][2] - new_time) / time_scale * 1000;
         notesToDraw.push([cur_notes[i][0], low, high]);
       } else {
         if( foundStart && cur_notes[i][1] >= limit ) {
@@ -154,8 +154,8 @@ class NoteStream extends Component {
     }
   }
 
-  inBounds(l, t) {
-    return !(l > this.props.time + this.props.timeScale || t < this.props.time);
+  inBounds(l, t, time, timeScale) {
+    return !(l > time + timeScale || t < time);
   }
 
   reset() {
@@ -166,7 +166,7 @@ class NoteStream extends Component {
   render() {
     return(
         //<canvas ref="canvas" width={1924} height={1000} />
-      <NoteStreamCanvas notesToDraw={this.state.notesToDraw} />
+      <NoteStreamCanvas notesToDraw={this.state.notesToDraw}/>
     )
   }
 }

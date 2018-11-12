@@ -13,11 +13,13 @@ class FreePlayScreen extends Component {
       keysHeld: [],
       notes: [],
       unfinished: {},
-      //time
-      time: 0,
-      last: null,
-      timeScale: 2,
     };
+
+
+    //time
+    this.time = 0;
+    this.last = null;
+    this.timeScale = 2;
 
     this.noteStream = React.createRef();
     this.onPianoKeyEvent = this.onPianoKeyEvent.bind(this);
@@ -29,35 +31,37 @@ class FreePlayScreen extends Component {
   }
 
   onTick(time) {
+    requestAnimationFrame(this.onTick);
+    let last = this.last;
     const scaled_time = time / 1000;
-    if (!this.state.last)
-      this.setState({last : scaled_time});
-    const diff = scaled_time - this.state.last;
-    if( this.noteStream.current ) {
-      const new_time = this.state.time + diff;
+    if (!last)
+      last = scaled_time;
+    const diff = scaled_time - last;
+    this.time = this.time + diff;
 
+
+
+    if( this.noteStream.current ) {
       let unfinished = this.state.unfinished;
       let notes = this.state.notes.slice();
       for( const [key, value] of Object.entries(unfinished)) {
-        notes[value][2] = new_time + this.state.timeScale;
-
+        notes[value][2] = this.time + this.timeScale;
       }
-      this.setState({time: new_time, notes : notes});
-      this.noteStream.current.drawNotes();
+      this.setState({notes : notes});
+      this.noteStream.current.drawNotes(this.time, this.timeScale);
     }
-    this.setState({last: scaled_time});
-    requestAnimationFrame(this.onTick);
+    this.last = scaled_time;
   }
 
   onPianoKeyEvent(key, active) {
     const state = {...this.state};
-    const time = this.state.time + this.state.timeScale;
+    const time = this.time + this.timeScale;
     if (active) {
       state.keysHeld = [
         ...this.state.keysHeld,
         key,
       ];
-      state.notes.push([keyToMidiCode(key), time, this.state.time]);
+      state.notes.push([keyToMidiCode(key), time, this.time]);
       state.unfinished[key] = state.notes.length - 1;
     } else {
       state.keysHeld =
@@ -71,8 +75,6 @@ class FreePlayScreen extends Component {
   render() {
     const highlightKeys = this.state.keysHeld;
     const notes = this.state.notes;
-    const time = this.state.time;
-    const timeScale = this.state.timeScale;
     return(
       <div className={styles.screen_container}>
         <div className={styles.player_container}>
@@ -80,8 +82,6 @@ class FreePlayScreen extends Component {
             <NoteStream
               ref={this.noteStream}
               notes={notes}
-              time={time}
-              timeScale={timeScale}
               change={true}
             />
           </div>

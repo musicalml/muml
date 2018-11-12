@@ -27,9 +27,6 @@ class LearningScreen extends Component {
       chords: null,
       trackInfo: null,
       trackId: trackId ? trackId : null,
-      //time
-      time: 0,
-      last: null,
       //learning
       currentChord: 0,
       keysHeld: [],
@@ -37,6 +34,10 @@ class LearningScreen extends Component {
       mistakeThisChord: false,
       mistakes: 0,
     };
+    //time
+    this.time = 0;
+    this.last = null;
+    this.timeScale = 2;
     this.onTrackLoaded = this.onTrackLoaded.bind(this);
     this.onNotesLoaded = this.onNotesLoaded.bind(this);
     this.onTrackInfoLoaded = this.onTrackInfoLoaded.bind(this);
@@ -97,19 +98,20 @@ class LearningScreen extends Component {
   }
 
   onTick(time) {
-    const scaled_time = time / 1000;
-    if (!this.state.last)
-      this.setState({last : scaled_time});
-    const diff = scaled_time - this.state.last;
-    if( this.noteStream.current ) {
-      if( this.state.time + diff <= this.state.chord_times[this.state.currentChord]) {
-        const new_time = this.state.time + diff;
-        this.setState({time: new_time});
-      }
-      //this.noteStream.current.drawNotes();
-    }
-    this.setState({last: scaled_time});
     requestAnimationFrame(this.onTick);
+    let last = this.last;
+    const scaled_time = time / 1000;
+    if (!last)
+      last = scaled_time;
+    const diff = scaled_time - last;
+
+    if( this.noteStream.current ) {
+      if( this.time + diff <= this.state.chord_times[this.state.currentChord]) {
+        this.time = this.time + diff;
+      }
+      this.noteStream.current.drawNotes(this.time, this.timeScale);
+    }
+    this.last = scaled_time;
   }
 
   /**
@@ -156,9 +158,9 @@ class LearningScreen extends Component {
       mistakes: 0,
       currentChord: 0,
       mistakeThisChord: false,
-      time: 0,
-      last: null,
     });
+    this.time = 0;
+    this.last = null;
   }
 
   /**
@@ -259,8 +261,6 @@ class LearningScreen extends Component {
             <NoteStream
               ref={this.noteStream}
               notes={notes}
-              time={time}
-              timeScale={2}
             />}
           </div>
           <div className={styles.piano_container}>
