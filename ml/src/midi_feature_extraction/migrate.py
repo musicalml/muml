@@ -24,7 +24,7 @@ def make_migrations(conn):
         for midi in midi_toinsert:
             src = os.path.join("../midi_import", midi)
             dst = os.path.join("../migrations", midi)
-            os.system("cp {} {}".format(src, dst))
+            os.system("cp \"{}\" \"{}\"".format(src, dst))
         print("done.")
     else:
         print("nothing to insert.")
@@ -54,7 +54,7 @@ def delete_corrupted_midi(conn):
     midi_corrupted = midi_all.difference(midi_intable)
     print("{} corrupted files".format(len(midi_corrupted)))
     for midi in midi_corrupted:
-        os.system("rm ../midi_import/{}".format(midi))
+        os.system("rm ../midi_import/\"{}\"".format(midi))
 
 
 def clear_migrations():

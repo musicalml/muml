@@ -7,6 +7,7 @@ conn = None
 
 @bottle.route("/<midi:re:[\.0-9a-zA-Z_-]*>/rawfeature/<feature:re:[0-9a-zA-Z_-]*>")
 def foo(midi, feature):
+    print("lul kek")
     cur = conn.cursor()
     feature = feature.replace(" ", "_")
     feature = feature.replace("-", "_")
