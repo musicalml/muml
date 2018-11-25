@@ -2,13 +2,13 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {ProgressBar, Button} from 'react-bootstrap';
 
-import NoteStream from 'Piano/NoteStream'
+import NoteStream from 'Piano/NoteStream';
 import {midiCodeToKey} from 'Piano/misc';
 
 import {getChords, getTrackInfo, getNotes} from 'Api';
 
 import styles from './TrackScreen.module.css';
-import Piano from "../Piano";
+import Piano from '../Piano';
 
 /**
  * A screen for playing a song or free play.
@@ -22,19 +22,19 @@ class LearningScreen extends Component {
     super(props);
     const {trackId} = this.props.match.params;
     this.state = {
-      //track info
+      // Track info
       notes: null,
       chords: null,
       trackInfo: null,
       trackId: trackId ? trackId : null,
-      //learning
+      // Learning
       currentChord: 0,
       keysHeld: [],
       keysHeldForChord: [],
       mistakeThisChord: false,
       mistakes: 0,
     };
-    //time
+    // Time
     this.time = 0;
     this.last = null;
     this.timeScale = 2;
@@ -53,6 +53,7 @@ class LearningScreen extends Component {
 
   static propTypes = {
     match: PropTypes.object,
+    onFinishTrack: PropTypes.function,
   };
 
   /**
@@ -67,9 +68,6 @@ class LearningScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
-  }
-
   /**
    * Updates state on API response setting the song.
    * @param {Object} response - the API response.
@@ -77,10 +75,14 @@ class LearningScreen extends Component {
   onTrackLoaded(response) {
     this.setState({
       chords: response.map((chord)=>(chord['notes'].map(midiCodeToKey))),
-      chord_times: response.map((chord)=>(chord['time']))
+      chord_times: response.map((chord)=>(chord['time'])),
     });
   }
 
+  /**
+   * Updates state on API response setting the notes.
+   * @param {Object} response - the API response
+   */
   onNotesLoaded(response) {
     this.setState({
       notes: response,
@@ -97,21 +99,26 @@ class LearningScreen extends Component {
     });
   }
 
+  /**
+   * requestAnimationFrame callback drawing the note screen
+   * @param {Time} time - the current time
+   */
   onTick(time) {
     requestAnimationFrame(this.onTick);
     let last = this.last;
-    const scaled_time = time / 1000;
-    if (!last)
-      last = scaled_time;
-    const diff = scaled_time - last;
+    const scaledTime = time / 1000;
+    if (!last) {
+      last = scaledTime;
+    }
+    const diff = scaledTime - last;
 
-    if( this.noteStream.current ) {
-      if( this.time + diff <= this.state.chord_times[this.state.currentChord]) {
+    if (this.noteStream.current) {
+      if (this.time + diff <= this.state.chord_times[this.state.currentChord]) {
         this.time = this.time + diff;
       }
       this.noteStream.current.drawNotes(this.time, this.timeScale);
     }
-    this.last = scaled_time;
+    this.last = scaledTime;
   }
 
   /**
@@ -235,7 +242,7 @@ class LearningScreen extends Component {
    */
   render() {
     const {chords, currentChord,
-      mistakes, trackInfo, notes, time} = this.state;
+      mistakes, trackInfo, notes} = this.state;
     const progressBarMax = chords !== null ? chords.length : 0;
     const correctPercent = (1 - mistakes/currentChord) * 100;
     const highlightKeys = chords !== null ? chords[currentChord] : [];
@@ -266,7 +273,7 @@ class LearningScreen extends Component {
           <div className={styles.piano_container}>
             {chords !== null &&
             <Piano highlightKeys={highlightKeys}
-                   onPianoKeyEvent={this.onPianoKeyEvent}
+              onPianoKeyEvent={this.onPianoKeyEvent}
             />}
           </div>
         </div>
