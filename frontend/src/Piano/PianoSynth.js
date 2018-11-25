@@ -6,8 +6,9 @@ import Tone from 'tone';
  * Uses sounds from /audio/salamander/.
  * @return {Tone.Sampler} The sampler synth
  */
-function PianoSynth() {
-  return new Tone.Sampler({
+
+const getPianoSynth = () => (
+  new Tone.Sampler({
     'A0': 'A0.[mp3|ogg]',
     'C1': 'C1.[mp3|ogg]',
     'D#1': 'Ds1.[mp3|ogg]',
@@ -41,7 +42,7 @@ function PianoSynth() {
   }, {
     'release': 1,
     'baseUrl': '/audio/salamander/',
-  }).toMaster();
-}
+  }).toMaster()
+);
 
-export default PianoSynth;
+export default getPianoSynth;

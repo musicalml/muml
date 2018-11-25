@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import PianoKeyboard from './PianoKeyboard';
 import PianoMidiInput from './PianoMidiInput.js';
 import {keysWithoutFakes} from './misc';
-import PianoSynth from "./PianoSynth";
+import getPianoSynth from './PianoSynth';
 
 
 const isPressed = (button) => (Object.keys(button).some(
@@ -28,8 +28,7 @@ class Piano extends Component {
     this.state = {
       buttons: keysWithoutFakes.map(keysToButtons),
     };
-    this.synth = PianoSynth();
-    //this.synth.set('detune', 200);
+    this.synth = getPianoSynth();
     this.pianoKeyMouseEvent = this.togglePianoKey.bind(this, 'mouse');
     this.pianoKeyMidiEvent = this.togglePianoKey.bind(this, 'midi');
     this.onMidiValueUpdate = this.onMidiValueUpdate.bind(this);

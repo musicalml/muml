@@ -25,14 +25,23 @@ class TrackSelectionScreen extends Component {
     this.gotoPrevPage = this.gotoPrevPage.bind(this);
   }
 
+  /**
+   * Fetches the first page of the track list.
+   */
   loadTrackList() {
     getTracks().then(this.onTracksLoaded).catch(console.log);
   }
 
+  /**
+   * Fetches the next page of the track list.
+   */
   gotoNextPage() {
     apiCall('GET', this.state.nextPageUrl).then(this.onTracksLoaded);
   }
 
+  /**
+   * Fetches the previous page of the track list.
+   */
   gotoPrevPage() {
     apiCall('GET', this.state.prevPageUrl).then(this.onTracksLoaded);
   }

@@ -1,17 +1,33 @@
 import React, {Component} from 'react';
-import {Button, ButtonToolbar, ListGroup} from 'react-bootstrap';
+import propTypes from 'prop-types';
+import {Button, ButtonToolbar} from 'react-bootstrap';
 import styles from './TrackScreen.module.css';
 
 
+/**
+ * A track info screen with controls to listen to/play a song
+ */
 class TrackScreen extends Component {
+  /**
+   * Default constructor
+   * @param {Object} props - the props.
+   */
   constructor(props) {
     super(props);
     const {trackId} = this.props.match.params;
     this.state = {
-      trackId: trackId ? trackId : null
-    }
+      trackId: trackId ? trackId : null,
+    };
   };
 
+  static propTypes = {
+    match: propTypes.object,
+  }
+
+  /**
+   * Renders the screen.
+   * @return {React.Node} - the rendered screen.
+   */
   render() {
     return (
       <div className={styles.Buttons}>
@@ -20,7 +36,7 @@ class TrackScreen extends Component {
           <Button href={`/listen/${this.state.trackId}`}>Listen</Button>
         </ButtonToolbar>
       </div>
-  )
+    );
   }
 };
 

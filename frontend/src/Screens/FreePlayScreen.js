@@ -1,12 +1,18 @@
 import React, {Component} from 'react';
 import styles from './TrackScreen.module.css';
-import NoteStream from "../Piano/NoteStream";
-import Piano from "../Piano";
+import NoteStream from '../Piano/NoteStream';
+import Piano from '../Piano';
 
 import {keyToMidiCode} from '../Piano/misc';
 
-
+/**
+ * A screen for playing without any tutoring.
+ */
 class FreePlayScreen extends Component {
+  /**
+   * Default constructor.
+   * @param {Object} props - the props.
+   */
   constructor(props) {
     super(props);
     this.state = {
@@ -16,7 +22,7 @@ class FreePlayScreen extends Component {
     };
 
 
-    //time
+    // Time
     this.time = 0;
     this.last = null;
     this.timeScale = 2;
@@ -26,33 +32,44 @@ class FreePlayScreen extends Component {
     this.onTick = this.onTick.bind(this);
   };
 
+  /**
+   * A callback that inserts into the rendering pipeline.
+   */
   componentDidMount() {
     requestAnimationFrame(this.onTick);
   }
 
+  /**
+   * A function that draws the canvas every tick.
+   * @param {Number} time - the current tume;
+   */
   onTick(time) {
     requestAnimationFrame(this.onTick);
     let last = this.last;
-    const scaled_time = time / 1000;
-    if (!last)
-      last = scaled_time;
-    const diff = scaled_time - last;
+    const scaledTime = time / 1000;
+    if (!last) {
+      last = scaledTime;
+    }
+    const diff = scaledTime - last;
     this.time = this.time + diff;
 
-
-
-    if( this.noteStream.current ) {
+    if (this.noteStream.current ) {
       let unfinished = this.state.unfinished;
       let notes = this.state.notes.slice();
-      for( const [key, value] of Object.entries(unfinished)) {
+      for (const [key, value] of Object.entries(unfinished)) {
         notes[value][2] = this.time + this.timeScale;
       }
-      this.setState({notes : notes});
+      this.setState({notes: notes});
       this.noteStream.current.drawNotes(this.time, this.timeScale);
     }
-    this.last = scaled_time;
+    this.last = scaledTime;
   }
 
+  /**
+   * Event when a piano key is pressed/depressed. Held keys are updated.
+   * @param {String} key - key in musical notation.
+   * @param {Boolean} active - whether the key is pressed or depressed.
+   */
   onPianoKeyEvent(key, active) {
     const state = {...this.state};
     const time = this.time + this.timeScale;
@@ -72,10 +89,14 @@ class FreePlayScreen extends Component {
     this.setState(state);
   }
 
+  /**
+   * Draws the screen with playing canvas.
+   * @return {React.Node} - the screen.
+   */
   render() {
     const highlightKeys = this.state.keysHeld;
     const notes = this.state.notes;
-    return(
+    return (
       <div className={styles.screen_container}>
         <div className={styles.player_container}>
           <div className={styles.notestream_container}>
@@ -87,12 +108,12 @@ class FreePlayScreen extends Component {
           </div>
           <div className={styles.piano_container}>
             <Piano highlightKeys={highlightKeys}
-                   onPianoKeyEvent={this.onPianoKeyEvent}
+              onPianoKeyEvent={this.onPianoKeyEvent}
             />
           </div>
         </div>
       </div>
-    )
+    );
   }
 };
 
