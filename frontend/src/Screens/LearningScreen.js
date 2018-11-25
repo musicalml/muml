@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {ProgressBar, Button} from 'react-bootstrap';
 
 import NoteStream from 'Piano/NoteStream';
-import {midiCodeToKey} from 'Piano/misc';
+import {midiCodeToKey, keyToMidiCode} from 'Piano/misc';
 
 import {getChords, getTrackInfo, getNotes} from 'Api';
 
@@ -34,10 +34,12 @@ class LearningScreen extends Component {
       mistakeThisChord: false,
       mistakes: 0,
     };
-    // Time
+    // Time. Is not a part of the state for perfomance reasons.
     this.time = 0;
     this.last = null;
     this.timeScale = 2;
+    this.keyLog = []; // Should contain "note:time" pairs
+
     this.onTrackLoaded = this.onTrackLoaded.bind(this);
     this.onNotesLoaded = this.onNotesLoaded.bind(this);
     this.onTrackInfoLoaded = this.onTrackInfoLoaded.bind(this);
@@ -171,10 +173,6 @@ class LearningScreen extends Component {
   }
 
   /**
-   * Resets the trainer component.
-   */
-
-  /**
    * Event when a piano key is pressed/depressed. Held keys are updated and
    * checked against pending chord.
    * @param {String} key - key in musical notation.
@@ -183,6 +181,7 @@ class LearningScreen extends Component {
   onPianoKeyEvent(key, active) {
     const state = {...this.state};
     const chord = state.chords[this.state.currentChord];
+    this.keyLog.push([Date.now(), keyToMidiCode(key)]);
     if (active) {
       state.keysHeld = [
         ...this.state.keysHeld,
@@ -202,11 +201,8 @@ class LearningScreen extends Component {
         state.currentChord++;
         state.keysHeldForChord = [];
         this.onCorrectChord();
-        if (state.currentChord === state.chords.length) {
-          if (this.props.onFinishTrack) {
-            this.props.onFinishTrack(state.mistakes);
-          }
-          state.currentChord = 0;
+        if (this.finishedTrack(state)) {
+          this.onFinishTrack();
         }
       }
     } else {
@@ -223,29 +219,95 @@ class LearningScreen extends Component {
   }
 
   /**
+   * A function used to determine whether the track is over.
+   * @param {Object} state - the state. this.state is used if not provided
+   * @return {Boolean} - the flag.
+   */
+  finishedTrack(state) {
+    if (state === undefined) {
+      return this.state.chords &&
+        this.state.currentChord === this.state.chords.length;
+    } else {
+      return state.currentChord === state.chords.length;
+    }
+  }
+
+  /**
+   * A function called when all the nots have been played.
+   * Calls props callback if provided.
+   */
+  onFinishTrack() {
+    console.log(this.keyLog);
+    if (this.props.onFinishTrack) {
+      this.props.onFinishTrack(this.state.mistakes);
+    }
+  }
+
+  /**
    * Resets the component if needed. Meant to be called using ref.
    */
   resetTrainer() {
     this.setState({
       ...this.state,
-      chord: 0,
+      currentChord: 0,
       keysHeld: [],
       mistakes: 0,
       keysHeldForChord: [],
     });
   }
 
+  /**
+   * A function to render the note stream.
+   * @return {React.Node} - the rendered stream.
+   */
+  renderNoteStream() {
+    const {chords, currentChord, notes} = this.state;
+    const progressBarMax = chords !== null ? chords.length : 0;
+    const highlightKeys = chords !== null ? chords[currentChord] : [];
+    return (
+      <div className={styles.player_container}>
+        <div className={styles.controls_container}>
+          <div className={styles.progressbar_container}>
+            <ProgressBar max={progressBarMax} now={currentChord}/>
+          </div>
+          <Button onClick={this.reset}>Restart</Button>
+        </div>
+        <div className={styles.notestream_container}>
+          {notes !== null &&
+          <NoteStream
+            ref={this.noteStream}
+            notes={notes}
+          />}
+        </div>
+        <div className={styles.piano_container}>
+          {chords !== null &&
+          <Piano highlightKeys={highlightKeys}
+            onPianoKeyEvent={this.onPianoKeyEvent}
+          />}
+        </div>
+      </div>
+    );
+  }
+
+  /**
+   * A function to render the done screen.
+   * @return {React.Node} - the rendered screen.
+   */
+  renderDoneScreen() {
+    return (
+      <div>
+        <h1>Ты петух</h1>
+      </div>
+    );
+  }
 
   /**
    * Renders the piano and controls.
    * @return {React.Node} - The rendered screen.
    */
   render() {
-    const {chords, currentChord,
-      mistakes, trackInfo, notes} = this.state;
-    const progressBarMax = chords !== null ? chords.length : 0;
+    const {currentChord, mistakes, trackInfo} = this.state;
     const correctPercent = (1 - mistakes/currentChord) * 100;
-    const highlightKeys = chords !== null ? chords[currentChord] : [];
     return (
       <div className={styles.screen_container}>
         <div className={styles.stats_container}>
@@ -256,27 +318,8 @@ class LearningScreen extends Component {
           { currentChord === 0 &&
             <p>{`Start playing!`}</p>}
         </div>
-        <div className={styles.player_container}>
-          <div className={styles.controls_container}>
-            <div className={styles.progressbar_container}>
-              <ProgressBar max={progressBarMax} now={currentChord}/>
-            </div>
-            <Button onClick={this.reset}>Restart</Button>
-          </div>
-          <div className={styles.notestream_container}>
-            {notes !== null &&
-            <NoteStream
-              ref={this.noteStream}
-              notes={notes}
-            />}
-          </div>
-          <div className={styles.piano_container}>
-            {chords !== null &&
-            <Piano highlightKeys={highlightKeys}
-              onPianoKeyEvent={this.onPianoKeyEvent}
-            />}
-          </div>
-        </div>
+        {this.finishedTrack() ? this.renderDoneScreen()
+                              : this.renderNoteStream()}
       </div>
     );
   }
