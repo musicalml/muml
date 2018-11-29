@@ -5,7 +5,7 @@ import {ProgressBar, Button} from 'react-bootstrap';
 import NoteStream from 'Piano/NoteStream';
 import {midiCodeToKey, keyToMidiCode} from 'Piano/misc';
 
-import {getChords, getTrackInfo, getNotes} from 'Api';
+import {getChords, getTrackInfo, getNotes, compareTracks} from 'Api';
 
 import styles from './TrackScreen.module.css';
 import Piano from '../Piano';
@@ -33,6 +33,7 @@ class LearningScreen extends Component {
       keysHeldForChord: [],
       mistakeThisChord: false,
       mistakes: 0,
+      score: null,
     };
     // Time. Is not a part of the state for perfomance reasons.
     this.time = 0;
@@ -50,6 +51,7 @@ class LearningScreen extends Component {
     this.onTick = this.onTick.bind(this);
     this.onPianoKeyEvent = this.onPianoKeyEvent.bind(this);
     this.resetTrainer = this.resetTrainer.bind(this);
+    this.onTrackRated = this.onTrackRated.bind(this);
     this.noteStream = React.createRef();
   }
 
@@ -77,7 +79,7 @@ class LearningScreen extends Component {
   onTrackLoaded(response) {
     this.setState({
       chords: response.map((chord)=>(chord['notes'].map(midiCodeToKey))),
-      chord_times: response.map((chord)=>(chord['time'])),
+      chordTimes: response.map((chord)=>(chord['time'])),
     });
   }
 
@@ -115,7 +117,7 @@ class LearningScreen extends Component {
     const diff = scaledTime - last;
 
     if (this.noteStream.current) {
-      if (this.time + diff <= this.state.chord_times[this.state.currentChord]) {
+      if (this.time + diff <= this.state.chordTimes[this.state.currentChord]) {
         this.time = this.time + diff;
       }
       this.noteStream.current.drawNotes(this.time, this.timeScale);
@@ -181,8 +183,8 @@ class LearningScreen extends Component {
   onPianoKeyEvent(key, active) {
     const state = {...this.state};
     const chord = state.chords[this.state.currentChord];
-    this.keyLog.push([Date.now(), keyToMidiCode(key)]);
     if (active) {
+      this.keyLog.push([Date.now(), keyToMidiCode(key)]);
       state.keysHeld = [
         ...this.state.keysHeld,
         key,
@@ -237,10 +239,24 @@ class LearningScreen extends Component {
    * Calls props callback if provided.
    */
   onFinishTrack() {
-    console.log(this.keyLog);
+    const keyLog = this.keyLog.map((pair) => [144, pair[1], 127, pair[0]]);
+    const data = {notes: keyLog};
+    console.log(this.state.trackId, data);
+    compareTracks(this.state.trackId, data).then(this.onTrackRated);
     if (this.props.onFinishTrack) {
       this.props.onFinishTrack(this.state.mistakes);
     }
+  }
+
+  /**
+   * A callback for the track rating API response, sets the score state.
+   * @param {Object} response - the api response.
+   */
+  onTrackRated(response) {
+    console.log(response);
+    this.setState({
+      score: response.grade,
+    });
   }
 
   /**
@@ -294,9 +310,12 @@ class LearningScreen extends Component {
    * @return {React.Node} - the rendered screen.
    */
   renderDoneScreen() {
+    const {score} = this.state;
     return (
       <div>
-        <h1>Ты петух</h1>
+        {score === null ? <h1>Computing your score...</h1>
+                        : <h1>{(score * 100).toFixed(0)}%</h1>}
+        <Button onClick={this.reset}>Restart</Button>
       </div>
     );
   }

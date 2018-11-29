@@ -21,7 +21,7 @@ const apiCall = (method, url, params) => {
       const requestUrl = `${url}?${query}`;
       return {data, requestUrl};
     } else {
-      return {params, url};
+      return {data: params, requestUrl: url};
     }
   })();
   return fetch(requestUrl, {
@@ -48,7 +48,7 @@ const getTracks = ()=>(
 const getTrackInfo = (trackId)=>(
   apiCall('GET', `${baseApiUrl}/track/${trackId}/`));
 const compareTracks = (trackId, data)=>(
-  apiCall('POST', `${baseApiUrl}/track/${trackId}/compare/`));
+  apiCall('POST', `${baseApiUrl}/track/${trackId}/compare/`, data));
 const getChords = (trackId)=>(
   apiCall('GET', `${baseApiUrl}/track/${trackId}/chords/`));
 const getNotes = (trackId)=>(
