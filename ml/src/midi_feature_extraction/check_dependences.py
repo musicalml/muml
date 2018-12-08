@@ -1,6 +1,8 @@
 import os
 import psycopg2
 
+from dbwrap import connect
+
 #------------------------------------------------------------------------------
 #                                jSymbolic
 #------------------------------------------------------------------------------
@@ -33,8 +35,7 @@ def install_jsymbolic():
 
 
 def check_feature_table():
-    conn = psycopg2.connect(host="database", user="postgres",
-                            password="postgres", dbname="mldata")
+    conn = connect()
 
     create_table_if_needed(conn)
 

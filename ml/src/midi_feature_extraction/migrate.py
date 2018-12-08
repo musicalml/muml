@@ -1,6 +1,8 @@
 import os
 import psycopg2
 
+from dbwrap import connect
+
 JSYMB = "java -Xmx6g -jar thirdparty/jSymbolic_2_2_user/jSymbolic2.jar -configrun config/jsymbolic_config.txt "
 
 
@@ -93,7 +95,9 @@ def create_insert_query():
         for line in f:
             line = line.strip()
             line = line.split(",")
-            line[0] = "'" + line[0].split("/")[-1][:-1] + "'"
+            filename = line[0].split("/")[-1][:-1]
+            filename = filename.replace("'", "''")
+            line[0] = "'" + filename + "'"
             line = ",".join(line)
             query += "({}),".format(line)
             N += 1
@@ -102,8 +106,7 @@ def create_insert_query():
 
 
 if __name__ == "__main__":
-    conn = psycopg2.connect(host="database", user="postgres",
-                            password="postgres", dbname="mldata")
+    conn = connect()
     if make_migrations(conn) > 0:
         migrate(conn)
     conn.close()
