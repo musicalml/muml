@@ -1,11 +1,14 @@
 import bottle
 import psycopg2
+
 from midi_feature_extraction.migrate import make_migrations, migrate
+from cheroot.wsgi import Server as WSGIServer
 
 conn = None
+app = bottle.Bottle()
 
 
-@bottle.route("/<midi:re:[\.0-9a-zA-Z_-]*>/rawfeature/<feature:re:[0-9a-zA-Z_-]*>")
+@app.route("/<midi:re:[\.0-9a-zA-Z_-]*>/rawfeature/<feature:re:[0-9a-zA-Z_-]*>")
 def foo(midi, feature):
     print("lul kek")
     cur = conn.cursor()
@@ -19,7 +22,7 @@ def foo(midi, feature):
     return str(value)
 
 
-@bottle.route("/manage/update_midifeatures")
+@app.route("/manage/update_midifeatures")
 def bar():
     conn = psycopg2.connect(host="database", user="postgres",
                             password="postgres", dbname="mldata")
@@ -32,7 +35,8 @@ def main():
     global conn
     conn = psycopg2.connect(host="database", user="postgres",
                             password="postgres", dbname="mldata")
-    bottle.run(host="0.0.0.0", port="9000")
+    server = WSGIServer(('0.0.0.0', 9000), app, server_name='ml', numthreads=2)
+    server.start()
     conn.close()
 
 
