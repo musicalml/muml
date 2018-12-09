@@ -1,5 +1,4 @@
 import bottle
-import psycopg2
 
 from midi_feature_extraction.migrate import make_migrations, migrate
 from cheroot.wsgi import Server as WSGIServer
@@ -27,11 +26,8 @@ def foo(midi, feature):
 
 @app.route("/manage/update_midifeatures")
 def bar():
-    # conn = psycopg2.connect(host="database", user="postgres",
-    #                         password="postgres", dbname="mldata")
     if make_migrations(conn) > 0:
         migrate(conn)
-    # conn.close()
 
 
 def main():
