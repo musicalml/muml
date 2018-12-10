@@ -5639,6 +5639,11 @@ kleur@^2.0.1:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-2.0.2.tgz#b704f4944d95e255d038f0cb05fb8a602c55a300"
   integrity sha512-77XF9iTllATmG9lSlIv0qdQ2BQ/h9t0bJllHlbvsQ0zUWfU7Yi0S8L5JXzPZgkefIiajLmBJJ4BsMJmqcf7oxQ==
 
+konva@2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/konva/-/konva-2.4.2.tgz#90d60b47a9fa405db0e0ab7da638edbf5d487fec"
+  integrity sha512-uzkyuLNkrbrJXYlB3/0WbmFrmzEDwxo0Opwv4NYGBSDdoXCL/6QhS4pHFP1wXLMmIToiAFn/AWBbs/Aiy0UUIw==
+
 last-call-webpack-plugin@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/last-call-webpack-plugin/-/last-call-webpack-plugin-3.0.0.tgz#9742df0e10e3cf46e5c0381c2de90d3a7a2d7555"
@@ -7574,7 +7579,7 @@ prop-types-extra@^1.0.1:
     react-is "^16.3.2"
     warning "^3.0.0"
 
-prop-types@^15.5.10, prop-types@^15.6.1, prop-types@^15.6.2:
+prop-types@^15.5.10, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@latest:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   integrity sha512-3pboPvLiWD7dkI3qf3KbUe6hKFKa52w+AE0VCqECtf+QHAKgOL37tTaNCnuX1nAAQ4ZhyP+kYVKf8rLmJ/feDQ==
@@ -7820,6 +7825,14 @@ react-is@^16.3.2:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.5.2.tgz#e2a7b7c3f5d48062eb769fcb123505eb928722e3"
   integrity sha512-hSl7E6l25GTjNEZATqZIuWOgSnpXb3kD0DVCujmg46K5zLxsbiKaaT6VO9slkSBDPZfYs30lwfJwbOFOnoEnKQ==
 
+react-konva@16.6.11:
+  version "16.6.11"
+  resolved "https://registry.yarnpkg.com/react-konva/-/react-konva-16.6.11.tgz#13e8928f4879cda8cc272a6e60b55468aeac993c"
+  integrity sha512-YTGpSCCCWiMi5AG2C0KdxgKzBO7XaYgK4tsIKjK4+2m7FVybNE/Nal62IeFJ/VeWVJX7f3MwzVPlJgCkeOFWxw==
+  dependencies:
+    react-reconciler "^0.17.0"
+    scheduler "^0.11.0"
+
 react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
@@ -7843,6 +7856,16 @@ react-prop-types@^0.4.0:
   integrity sha1-+ZsL+0AGkpya8gUefBQUpcdbk9A=
   dependencies:
     warning "^3.0.0"
+
+react-reconciler@^0.17.0:
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.17.0.tgz#7ea99b61290956efb895bdb8a3a288dafeb585b5"
+  integrity sha512-gDcWwagjyNldniQ4TrekdBUAYB6GtZ/PhMCN92G521HcbmKPq/sGd8HI41gEK9/lqeTSR/YFUFEndSIlmS5wLA==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.11.0"
 
 react-router-dom@^4.3.1:
   version "4.3.1"
@@ -8411,6 +8434,14 @@ schedule@^0.5.0:
   resolved "https://registry.yarnpkg.com/schedule/-/schedule-0.5.0.tgz#c128fffa0b402488b08b55ae74bb9df55cc29cc8"
   integrity sha512-HUcJicG5Ou8xfR//c2rPT0lPIRR09vVvN81T9fqfVgBmhERUbDEQoYKjpBxbueJnCPpSu2ujXzOnRQt6x9o/jw==
   dependencies:
+    object-assign "^4.1.1"
+
+scheduler@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.11.0.tgz#def1f1bfa6550cc57981a87106e65e8aea41a6b5"
+  integrity sha512-MAYbBfmiEHxF0W+c4CxMpEqMYK+rYF584VP/qMKSiHM6lTkBKKYOJaDiSILpJHla6hBOsVd6GucPL46o2Uq3sg==
+  dependencies:
+    loose-envify "^1.1.0"
     object-assign "^4.1.1"
 
 schema-utils@^0.4.4, schema-utils@^0.4.5:

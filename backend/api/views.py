@@ -46,5 +46,18 @@ def track_chords(request, pk):
     original_song = MidiSong(raw_list_to_track(original.messages))
     chords = []
     for chord in original_song.chords:
-        chords.append(list_note_nums(chord.notes))
+        chords.append({'notes': list_note_nums(chord.notes), 'time': chord.time})
     return Response(chords)
+
+
+@api_view(['GET'])
+def track_notes(request, pk):
+    try:
+        original = Midi.objects.get(id=pk)
+    except Midi.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    original_song = MidiSong(raw_list_to_track(original.messages))
+    notes = []
+    for note in original_song.notes:
+        notes.append([note.note, note.time, note.time + note.duration, note.duration])
+    return Response(notes)

@@ -1,27 +1,45 @@
 .screen_container {
     position: relative;
-    min-height: 100%;
-    width: 90%;
+    height: 100%;
+    width: 100%;
     margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.stats_container {
+    height: 10%;
+}
+
+canvas {
+    height: 100%;
+    width: 100%;
+    background-image: url(./background.png);
+    background-size: 100%;
+}
+
+.notestream_container {
+    border: 3px solid black;
+    flex: 60;
+    height: 75%;
 }
 
 .piano_container {
     width: 100%;
-    height: 40%;
-    flex: 1;
+    flex: 15;
+    height: 20%;
 }
 
 .player_container {
     display: flex;
     flex-direction: column;
-    margin: auto;
-    height: 300px;
-    position: relative;
-    margin-top: 200px;
+    height: 90%;
 }
 
 .controls_container {
     display: flex;
+    height: 5%;
+    width: 100%;
     padding-bottom: 10px;
 }
 
@@ -30,4 +48,7 @@
     margin-right: 10px;
     display: table-cell;
     vertical-align: middle;
+}
+
+.toolbar {
 }
