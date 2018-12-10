@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import styles from './TrackScreen.module.css';
+import styles from './ListenScreen.module.css';
 import NoteStream from "../Piano/NoteStream";
 import Piano from "../Piano";
 

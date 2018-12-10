@@ -7,7 +7,7 @@ import {midiCodeToKey, keyToMidiCode} from 'Piano/misc';
 
 import {getChords, getTrackInfo, getNotes, compareTracks} from 'Api';
 
-import styles from './TrackScreen.module.css';
+import styles from './LearningScreen.module.css';
 import Piano from '../Piano';
 
 /**
