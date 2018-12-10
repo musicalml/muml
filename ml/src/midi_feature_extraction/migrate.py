@@ -106,7 +106,7 @@ def create_insert_query():
             filename = line[0].split("/")[-1][:-1]
             filename = filename.replace("'", "''")
             line[0] = "'" + filename + "'"
-            line = ",".join(line)
+            line = ",".join(["default"] + line)
             query += "({}),".format(line)
             N += 1
     query = query[:-1] + ";"

@@ -140,7 +140,7 @@ def convert_feature_to_column_name(name):
 
 def check_dependences():
     check_jsymbolic()
-    # check_feature_table()
+    check_feature_table()
 
 
 if __name__ == "__main__":
