@@ -2,6 +2,7 @@ import os
 import psycopg2
 
 from dbwrap import connect, midifeatures
+from time import sleep
 
 
 #------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ def install_jsymbolic():
 def check_feature_table():
     conn = connect()
 
-    create_table_if_needed(conn)
+    wait_for_table_creation(conn)
 
     conn.close()
 
@@ -57,6 +58,22 @@ def create_table_if_needed(conn):
         query = create_query()
         cur.execute(query)
         conn.commit()
+    cur.close()
+
+
+def wait_for_table_creation(conn):
+    cur = conn.cursor()
+
+    print("Looking for table '{}'...".format(midifeatures), end=" ")
+    cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='{}');".format(midifeatures))
+
+    while not cur.fetchone()[0]:
+        print("wait 10 sec...", end=" ")
+        sleep(10)
+        cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='{}');".format(midifeatures))
+
+    print("found.")
+
     cur.close()
 
 
@@ -123,7 +140,7 @@ def convert_feature_to_column_name(name):
 
 def check_dependences():
     check_jsymbolic()
-    check_feature_table()
+    # check_feature_table()
 
 
 if __name__ == "__main__":
