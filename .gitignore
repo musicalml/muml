@@ -1,3 +1,5 @@
 postgres-data
 __pycache__
 midi_import/*
+.idea/
+thirdparty

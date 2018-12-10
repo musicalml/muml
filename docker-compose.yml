@@ -43,6 +43,23 @@ services:
       - "8080:80"
     volumes:
       - "static:/www/static"
+      
+  ml:
+    tty: true
+    stdin_open: true
+    restart: always
+    build: ./ml
+    working_dir: "/app/ml"
+    volumes:
+      - "./ml:/app/ml"
+      - "./midi_import:/app/midi_import"
+    expose:
+      - "9000"
+    ports:
+      - "9000:9000"
+    depends_on:
+      - database
+    command: ["bash", "-c", "/app/ml/run.sh"]
 
 volumes:
   static:
