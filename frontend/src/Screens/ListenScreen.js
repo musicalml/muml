@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import styles from './ListenScreen.module.css';
+import styles from './FreePlayScreen.module.css';
 import NoteStream from "../Piano/NoteStream";
 import Piano from "../Piano";
 
@@ -116,21 +116,17 @@ class ListenScreen extends Component {
     const notes = this.state.notes;
     return(
       <div className={styles.screen_container}>
-        <div className={styles.player_container}>
-          <div className={styles.notestream_container}>
-            {notes && <NoteStream
-              ref={this.noteStream}
-              notes={notes}
-              change={false}
-            />}
-          </div>
-          <div className={styles.piano_container}>
-            <Piano
-            />
-          </div>
+        {notes && <NoteStream
+          ref={this.noteStream}
+          notes={notes}
+          change={false}
+        />}
+        <div className={styles.piano_container}>
+          <Piano
+          />
         </div>
       </div>
-    )
+    );
   }
 };
 
