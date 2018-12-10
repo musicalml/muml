@@ -69,8 +69,38 @@ def create_query():
 
 
 def get_feature_names():
-    with open("config/feature_names.txt", "r") as f:
-        feature_names = f.read().split(",")
+    histogram_nbins = {
+        "Basic_Pitch_Histogram": 128,
+        "Pitch_Class_Histogram": 12,
+        "Folded_Fifths_Pitch_Class_Histogram": 12,
+        "Melodic_Interval_Histogram": 128,
+        "Vertical_Interval_Histogram": 128,
+        "Wrapped_Vertical_Interval_Histogram": 12,
+        "Chord_Type_Histogram": 11,
+        "Rhythmic_Value_Histogram": 12,
+        "Rhythmic_Value_Median_Run_Lengths_Histogram": 12,
+        "Rhythmic_Value_Variability_in_Run_Lengths_Histogram": 12,
+        "Beat_Histogram_Tempo_Standardized": 161,
+        "Beat_Histogram": 161,
+        "Time_Prevalence_of_Pitched_Instruments": 128,
+        "Note_Prevalence_of_Unpitched_Instruments": 47,
+        "Note_Prevalence_of_Pitched_Instruments": 128,
+        "Unpitched_Instruments_Present": 47,
+        "Pitched_Instruments_Present": 128,
+        "Initial_Time_Signature": 2,
+    }
+    with open("config/jsymbolic_config.txt") as f:
+        line = f.readline()
+        while not line.startswith("<features_to_extract>"):
+            line = f.readline()
+        names = [name.strip().replace(" ", "_") for name in f.readlines()]
+    feature_names = []
+    for name in names:
+        if name in histogram_nbins:
+            for i in range(histogram_nbins[name]):
+                feature_names.append(name + "_{}".format(i))
+        else:
+            feature_names.append(name)
     return feature_names
 
 
