@@ -23,7 +23,7 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div className={'app'}>
-          <Navbar>
+          <Navbar style={{marginBottom: "0"}}>
             <Navbar.Header>
               <Navbar.Brand>
                 <a href="/">MUML</a>
@@ -34,7 +34,7 @@ class App extends Component {
                 Tracks
               </NavItem>
               <NavItem eventKey={2} href="/play">
-                Play
+                Free play
               </NavItem>
             </Nav>
           </Navbar>

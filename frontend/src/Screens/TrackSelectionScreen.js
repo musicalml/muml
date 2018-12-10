@@ -74,15 +74,17 @@ class TrackSelectionScreen extends Component {
     const {tracks, prevPageUrl, nextPageUrl} = this.state;
     return (
       <div className={styles.screen_container}>
-        {tracks === null && 'Nothing to see here...'}
-        {tracks === [] && 'No tracks found...'}
-        <ListGroup>
-          {tracks && tracks.map((track) => (
-            <ListGroupItem href={`/tracks/${track.id}`} key={track.id}>
-              {track.name}
-            </ListGroupItem>
-          ))}
-        </ListGroup>
+        <div className={styles.list_container}>
+          {tracks === null && 'Nothing to see here...'}
+          {tracks === [] && 'No tracks found...'}
+          {tracks && <ListGroup style={{width: '100%'}}>
+            {tracks && tracks.map((track) => (
+              <ListGroupItem href={`/tracks/${track.id}`} key={track.id}>
+                {track.name}
+              </ListGroupItem>
+            ))}
+          </ListGroup> }
+        </div>
         <div className={styles.next_prev_button_container}>
           <Button disabled={prevPageUrl === null} onClick={this.gotoPrevPage}>
             Prev page

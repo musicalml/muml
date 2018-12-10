@@ -21,7 +21,6 @@ class FreePlayScreen extends Component {
       unfinished: {},
     };
 
-
     // Time
     this.time = 0;
     this.last = null;
