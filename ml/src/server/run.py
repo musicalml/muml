@@ -2,7 +2,7 @@ import bottle
 
 from midi_feature_extraction.migrate import make_migrations, migrate
 from cheroot.wsgi import Server as WSGIServer
-from dbwrap import connect
+from dbwrap import connect, midifeatures
 
 conn = None
 app = bottle.Bottle()
@@ -17,7 +17,7 @@ def foo(midi, feature):
     feature = feature.replace("-", "_")
     feature = feature.lower()
     print(midi, feature)
-    query = "SELECT {} FROM midifeatures WHERE filename = '{}';".format(feature, midi)
+    query = "SELECT {} FROM {} WHERE filename = '{}';".format(feature, midifeatures, midi)
     cur.execute(query)
     value = cur.fetchone()[0]
     cur.close()

@@ -1,7 +1,7 @@
 import os
 import psycopg2
 
-from dbwrap import connect
+from dbwrap import connect, midifeatures
 
 #------------------------------------------------------------------------------
 #                                jSymbolic
@@ -44,8 +44,8 @@ def check_feature_table():
 
 def create_table_if_needed(conn):
     cur = conn.cursor()
-    print("Looking for table 'midifeatures'...", end=" ")
-    cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='midifeatures');")
+    print("Looking for table '{}'...".format(midifeatures), end=" ")
+    cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='{}');".format(midifeatures))
     if cur.fetchone()[0]:
         print("found.")
     else:
@@ -59,7 +59,7 @@ def create_table_if_needed(conn):
 
 def create_query():
     feature_names = get_feature_names()
-    query = "CREATE TABLE IF NOT EXISTS midifeatures (\n"
+    query = "CREATE TABLE IF NOT EXISTS {} (\n".format(midifeatures)
     query += "\tfilename varchar PRIMARY KEY,\n"
     for feature_name in feature_names:
         column_name = convert_feature_to_column_name(feature_name)

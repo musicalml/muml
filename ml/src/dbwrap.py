@@ -2,6 +2,8 @@ import psycopg2
 
 from time import sleep
 
+# features table name
+midifeatures = "api_midifilter"
 
 def connect():
     connected = False
@@ -9,7 +11,7 @@ def connect():
         print("Connecting to database...", end=" ")
         try:
             conn = psycopg2.connect(host="database", user="postgres",
-                                    password="postgres", dbname="mldata")
+                                    password="postgres", dbname="muml")
             connected = True
             print("done.")
         except psycopg2.OperationalError:
