@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import styles from './TrackScreen.module.css';
-import NoteStream from "../Piano/NoteStream";
-import Piano from "../Piano";
+import freePlayStyles from './FreePlayScreen.module.css';
+import styles from './ListenScreen.module.css';
+import NoteStream from '../Piano/NoteStream';
+import Piano from '../Piano';
 
-import { getNotes, getTrackInfo} from "../Api";
+import {getNotes, getTrackInfo} from '../Api';
 import {midiCodeToKey} from 'Piano/misc';
-import PianoSynth from "../Piano/PianoSynth";
+import PianoSynth from '../Piano/PianoSynth';
 
 
 class ListenScreen extends Component {
@@ -113,24 +114,29 @@ class ListenScreen extends Component {
   }
 
   render() {
-    const notes = this.state.notes;
+    const {notes, trackInfo} = this.state;
     return(
       <div className={styles.screen_container}>
-        <div className={styles.player_container}>
-          <div className={styles.notestream_container}>
-            {notes && <NoteStream
-              ref={this.noteStream}
-              notes={notes}
-              change={false}
-            />}
-          </div>
-          <div className={styles.piano_container}>
-            <Piano
-            />
+        <div className={styles.header_container}>
+          {trackInfo && <h1>{trackInfo.name}</h1>}
+        </div>
+        <div className={styles.free_play_container}>
+          <div className={freePlayStyles.screen_container}>
+            <div className={freePlayStyles.notestream_container}>
+              {notes && <NoteStream
+                ref={this.noteStream}
+                notes={notes}
+                change={false}
+              />}
+            </div>
+            <div className={freePlayStyles.piano_container}>
+              <Piano
+              />
+            </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 };
 

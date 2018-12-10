@@ -6,21 +6,13 @@
 }
 
 .screen_container {
-    order: 2;
-    height: 97%;
+    flex: 1;
+    display: flex;
 }
 
-.navbar {
-    order: 1;
-    height: 3%;
-    min-height: 0px;
-    margin: unset;
-}
-
-.navbar-header, .navbar-nav, .navbar-brand, a.navbar-brand, .nav>li>a {
-    padding-top: unset;
-    padding-bottom: unset;
-    min-height: 0px;
+canvas {
     height: 100%;
+    width: 100%;
+    background-image: url(./piano.svg);
+    background-size: 100%;
 }
-

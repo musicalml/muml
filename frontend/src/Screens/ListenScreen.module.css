@@ -1,0 +1,12 @@
+.screen_container {
+    height: 100%;
+}
+
+.header_container {
+    padding-top: 20px;
+    height: 15%;
+}
+
+.free_play_container {
+    height: 85%;
+}

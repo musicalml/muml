@@ -1,0 +1,40 @@
+.screen_container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.stats_container {
+    height: 10%;
+}
+
+.notestream_container {
+    height: 80%;
+    width: 100%;
+}
+
+.piano_container {
+    width: 100%;
+    height: 20%;
+}
+
+.controls_container {
+    display: flex;
+    height: 5%;
+    width: 100%;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+.progressbar_container {
+    flex: 1;
+    margin-right: 10px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.toolbar {
+}

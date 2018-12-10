@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import styles from './TrackScreen.module.css';
+import styles from './FreePlayScreen.module.css';
 import NoteStream from '../Piano/NoteStream';
 import Piano from '../Piano';
 
@@ -20,7 +20,6 @@ class FreePlayScreen extends Component {
       notes: [],
       unfinished: {},
     };
-
 
     // Time
     this.time = 0;
@@ -98,19 +97,17 @@ class FreePlayScreen extends Component {
     const notes = this.state.notes;
     return (
       <div className={styles.screen_container}>
-        <div className={styles.player_container}>
-          <div className={styles.notestream_container}>
-            <NoteStream
-              ref={this.noteStream}
-              notes={notes}
-              change={true}
-            />
-          </div>
-          <div className={styles.piano_container}>
-            <Piano highlightKeys={highlightKeys}
-              onPianoKeyEvent={this.onPianoKeyEvent}
-            />
-          </div>
+        <div className={styles.notestream_container}>
+          <NoteStream
+            ref={this.noteStream}
+            notes={notes}
+            change={true}
+          />
+        </div>
+        <div className={styles.piano_container}>
+          <Piano highlightKeys={highlightKeys}
+            onPianoKeyEvent={this.onPianoKeyEvent}
+          />
         </div>
       </div>
     );

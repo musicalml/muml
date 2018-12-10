@@ -1,12 +1,24 @@
 .screen_container {
     margin: auto;
     height: 100%;
-    width: 75%;
+    width: 80%;
     max-width: 50em;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.list_container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .next_prev_button_container {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    margin-top: 2%;
+    margin-bottom: 2%;
 }
