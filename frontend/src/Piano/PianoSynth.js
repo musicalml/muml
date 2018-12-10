@@ -41,7 +41,7 @@ const getPianoSynth = () => (
     'C8': 'C8.[mp3|ogg]',
   }, {
     'release': 1,
-    'baseUrl': '/audio/salamander/',
+    'baseUrl': '/static/audio/salamander/',
   }).toMaster()
 );
 
