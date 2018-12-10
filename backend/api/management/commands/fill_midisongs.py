@@ -11,7 +11,7 @@ class Command(BaseCommand):
     help = 'Fills db with midis'
 
     def handle(self, *args, **options):
-        pathlist = Path(MIDI_IMPORT_PATH).glob('**/*.mid')
+        pathlist = Path(MIDI_IMPORT_PATH).glob('**/*.[mM][iI][dD](i|I)?')
         for path in pathlist:
             # because path is object not string
             path_in_str = str(path)
