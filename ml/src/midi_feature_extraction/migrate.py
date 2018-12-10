@@ -1,7 +1,9 @@
 import os
 import psycopg2
 
+
 from dbwrap import connect, midifeatures
+
 
 JSYMB = "java -Xmx6g -jar thirdparty/jSymbolic_2_2_user/jSymbolic2.jar -configrun config/jsymbolic_config.txt "
 
@@ -36,7 +38,9 @@ def make_migrations(conn):
 
 def extract_exised_filenames(conn):
     cur = conn.cursor()
+
     cur.execute("SELECT filename FROM {};".format(midifeatures))
+
     filenames = set([r[0] for r in cur.fetchall()])
     cur.close()
     return filenames
@@ -75,7 +79,9 @@ def extract_features():
 
 def insert_into_table(conn):
     if os.path.exists("/tmp/feature_values.csv"):
+
         print("Inserting into table '{}'...".format(midifeatures), end=" ")
+
         cur = conn.cursor()
 
         query, N = create_insert_query()
@@ -88,7 +94,9 @@ def insert_into_table(conn):
 
 
 def create_insert_query():
+
     query = "INSERT INTO {} VALUES ".format(midifeatures)
+
     N = 0
     with open("/tmp/feature_values.csv", "r") as f:
         f.readline()

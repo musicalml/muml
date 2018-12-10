@@ -5,6 +5,7 @@ from time import sleep
 # features table name
 midifeatures = "api_midifilter"
 
+
 def connect():
     connected = False
     while not connected:
@@ -12,6 +13,7 @@ def connect():
         try:
             conn = psycopg2.connect(host="database", user="postgres",
                                     password="postgres", dbname="muml")
+
             connected = True
             print("done.")
         except psycopg2.OperationalError:

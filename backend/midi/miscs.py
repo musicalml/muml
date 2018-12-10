@@ -31,22 +31,26 @@ def chords_distance(a, b):
     return dist
 
 
-def msg_to_raw(msg, num=0):
-    raw = [144, msg.note, msg.velocity if msg.type == 'note_on' else 0, round(msg.time * 1000), num]
+def msg_to_raw(msg):
+    if msg.type in ['note_on', 'note_off']:
+        raw = [144, msg.note, msg.velocity if msg.type == 'note_on' else 0]
+    else:
+        raw = [-1, -1, -1]
+    raw += [round(msg.time * 1000)]
     return raw
 
 
 def raw_to_msg(raw):
-    msg = Message('note_on' if raw[2] > 0 else 'note_off')
-    msg.note = raw[1]
-    msg.velocity = raw[2]
+    if raw[0] == 144:
+        msg = Message.from_bytes(raw[:3])
+    else:
+        msg = Message('sysex', data=[])
     msg.time = raw[3] / 1000
-    msg.channel = raw[4]
     return msg
 
 
-def track_to_raw_list(track, num=0):
-    raw_list = [msg_to_raw(x, num) for x in track]
+def track_to_raw_list(track):
+    raw_list = [msg_to_raw(x) for x in track]
     return raw_list
 
 

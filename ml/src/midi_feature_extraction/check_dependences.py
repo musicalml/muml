@@ -3,6 +3,7 @@ import psycopg2
 
 from dbwrap import connect, midifeatures
 
+
 #------------------------------------------------------------------------------
 #                                jSymbolic
 #------------------------------------------------------------------------------
@@ -44,8 +45,10 @@ def check_feature_table():
 
 def create_table_if_needed(conn):
     cur = conn.cursor()
+
     print("Looking for table '{}'...".format(midifeatures), end=" ")
     cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='{}');".format(midifeatures))
+
     if cur.fetchone()[0]:
         print("found.")
     else:
@@ -59,7 +62,9 @@ def create_table_if_needed(conn):
 
 def create_query():
     feature_names = get_feature_names()
+
     query = "CREATE TABLE IF NOT EXISTS {} (\n".format(midifeatures)
+
     query += "\tfilename varchar PRIMARY KEY,\n"
     for feature_name in feature_names:
         column_name = convert_feature_to_column_name(feature_name)
@@ -69,6 +74,7 @@ def create_query():
 
 
 def get_feature_names():
+
     histogram_nbins = {
         "Basic_Pitch_Histogram": 128,
         "Pitch_Class_Histogram": 12,
@@ -101,6 +107,7 @@ def get_feature_names():
                 feature_names.append(name + "_{}".format(i))
         else:
             feature_names.append(name)
+
     return feature_names
 
 

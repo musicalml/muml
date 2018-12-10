@@ -25,14 +25,23 @@ class TrackSelectionScreen extends Component {
     this.gotoPrevPage = this.gotoPrevPage.bind(this);
   }
 
+  /**
+   * Fetches the first page of the track list.
+   */
   loadTrackList() {
     getTracks().then(this.onTracksLoaded).catch(console.log);
   }
 
+  /**
+   * Fetches the next page of the track list.
+   */
   gotoNextPage() {
     apiCall('GET', this.state.nextPageUrl).then(this.onTracksLoaded);
   }
 
+  /**
+   * Fetches the previous page of the track list.
+   */
   gotoPrevPage() {
     apiCall('GET', this.state.prevPageUrl).then(this.onTracksLoaded);
   }
@@ -69,7 +78,7 @@ class TrackSelectionScreen extends Component {
         {tracks === [] && 'No tracks found...'}
         <ListGroup>
           {tracks && tracks.map((track) => (
-            <ListGroupItem href={`/play/${track.id}`} key={track.id}>
+            <ListGroupItem href={`/tracks/${track.id}`} key={track.id}>
               {track.name}
             </ListGroupItem>
           ))}

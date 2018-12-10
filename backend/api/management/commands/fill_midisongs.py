@@ -24,7 +24,7 @@ class Command(BaseCommand):
                 msgs = []
                 for msg in mid:
                     msgs.append(msg)
-                raw_list = track_to_raw_list(purify_track(msgs), 0)
+                raw_list = track_to_raw_list(msgs)
                 new_midi = Midi(name=name, messages=raw_list)
                 new_midi.save()
             except Exception as e:
