@@ -284,7 +284,7 @@ class LearningScreen extends Component {
       <div className={styles.player_container}>
         <div className={styles.controls_container}>
           <div className={styles.progressbar_container}>
-            <ProgressBar max={progressBarMax} now={currentChord}/>
+            <ProgressBar style={{flex: 1, margin: 0}} max={progressBarMax} now={currentChord}/>
           </div>
           <Button onClick={this.reset}>Restart</Button>
         </div>
@@ -314,8 +314,8 @@ class LearningScreen extends Component {
     return (
       <div>
         {score === null ? <h1>Computing your score...</h1>
-                        : <h1>{(score * 100).toFixed(0)}%</h1>}
-        <Button onClick={this.reset}>Restart</Button>
+                        : <h1>You scored {(score * 100).toFixed(0)}%</h1>}
+        <Button bsSize='large' onClick={this.reset}>Restart</Button>
       </div>
     );
   }

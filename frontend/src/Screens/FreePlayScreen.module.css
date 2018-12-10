@@ -11,11 +11,9 @@
     height: 10%;
 }
 
-canvas {
+.notestream_container {
     height: 80%;
     width: 100%;
-    background-image: url(./piano.svg);
-    background-size: 100%;
 }
 
 .piano_container {

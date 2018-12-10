@@ -97,11 +97,13 @@ class FreePlayScreen extends Component {
     const notes = this.state.notes;
     return (
       <div className={styles.screen_container}>
+        <div className={styles.notestream_container}>
           <NoteStream
             ref={this.noteStream}
             notes={notes}
             change={true}
           />
+        </div>
         <div className={styles.piano_container}>
           <Piano highlightKeys={highlightKeys}
             onPianoKeyEvent={this.onPianoKeyEvent}
