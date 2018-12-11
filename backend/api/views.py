@@ -42,7 +42,7 @@ class MidiList(generics.ListCreateAPIView):
                 continue
             formatted_orders.append(prefix + 'filter__' + main)
         print(formatted_orders)
-        queryset = queryset.order_by(*formatted_orders)
+        queryset = queryset.order_by(*formatted_orders, 'name')
         return queryset
 
 

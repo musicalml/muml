@@ -1,9 +1,25 @@
 import React, {Component} from 'react';
-import {Button, ListGroup, ListGroupItem} from 'react-bootstrap';
+import {DropdownButton, MenuItem, Button, ListGroup, ListGroupItem} from
+  'react-bootstrap';
 
 import apiCall, {getTracks} from 'Api';
 
 import styles from './TrackSelectionScreen.module.css';
+
+const filters = {
+  'nd': 'Note density',
+  'pcv': 'Pitch class variability',
+  'mom': 'Major or minor',
+  'mcmi': 'Most common melodic interval',
+  'mmi': 'Mean melodic interval',
+  'aoa': 'Amount of arpeggiation',
+  'rn': 'Repeated notes',
+  'cm': 'Chromatic motion',
+  'mthirds': 'Melodic thirds',
+  'vt': 'Vertical thirds',
+  'mtemp': 'Mean tempo',
+  'dis': 'Duration in seconds',
+};
 
 /**
  * A screen for selecting a song to play.
@@ -19,6 +35,7 @@ class TrackSelectionScreen extends Component {
       tracks: null,
       nextPageUrl: null,
       prevPageUrl: null,
+      sortBy: null,
     };
     this.onTracksLoaded = this.onTracksLoaded.bind(this);
     this.gotoNextPage = this.gotoNextPage.bind(this);
@@ -28,8 +45,12 @@ class TrackSelectionScreen extends Component {
   /**
    * Fetches the first page of the track list.
    */
-  loadTrackList() {
-    getTracks().then(this.onTracksLoaded).catch(console.log);
+  loadTrackList(sortBy) {
+    if (sortBy === undefined) {
+      sortBy = this.state.sortBy;
+    }
+    const sort = sortBy === null ? {} : {f: sortBy};
+    getTracks(sort).then(this.onTracksLoaded).catch(console.log);
   }
 
   /**
@@ -58,8 +79,8 @@ class TrackSelectionScreen extends Component {
    * @param {Object} response - the API response.
    */
   onTracksLoaded(response) {
+    console.log(response);
     this.setState({
-      ...this.state,
       tracks: response.results,
       nextPageUrl: response.next,
       prevPageUrl: response.previous,
@@ -67,13 +88,32 @@ class TrackSelectionScreen extends Component {
   }
 
   /**
+   * Callback for when a sorting option is selected.
+   * @param {String} key - the selected option.
+   */
+  onSortOptionSelect(key) {
+    if (key === this.state.sortBy) {
+      return;
+    }
+    this.setState({
+      sortBy: key,
+      nexPageUrl: null,
+      prevPageUrl: null,
+    });
+    this.loadTrackList(key);
+  }
+
+  /**
    * Renders links to the songs.
    * @return {React.Node} - The rendered list screen.
    */
   render() {
-    const {tracks, prevPageUrl, nextPageUrl} = this.state;
+    const {sortBy, tracks, prevPageUrl, nextPageUrl} = this.state;
     return (
       <div className={styles.screen_container}>
+        <h1>
+          Select a song
+        </h1>
         <div className={styles.list_container}>
           {tracks === null && 'Nothing to see here...'}
           {tracks === [] && 'No tracks found...'}
@@ -89,6 +129,22 @@ class TrackSelectionScreen extends Component {
           <Button disabled={prevPageUrl === null} onClick={this.gotoPrevPage}>
             Prev page
           </Button>
+          <DropdownButton
+            title='Sort by'
+            id='sort_by'
+            onSelect={this.onSortOptionSelect.bind(this)}
+            dropup
+          >
+            <MenuItem eventKey={null} active={sortBy === null}>
+              Name
+            </MenuItem>
+            <MenuItem divider />
+            {Object.keys(filters).sort().map((key)=>
+              <MenuItem eventKey={key} active={key === sortBy} key={key}>
+                {filters[key]}
+              </MenuItem>
+            )}
+          </DropdownButton>
           <Button disabled={nextPageUrl === null} onClick={this.gotoNextPage}>
             Next page
           </Button>
