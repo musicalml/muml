@@ -42,8 +42,8 @@ const apiCall = (method, url, params) => {
 
 const baseApiUrl = '/api';
 
-const getTracks = ()=>(
-  apiCall('GET', `${baseApiUrl}/track/`, {})
+const getTracks = (data)=>(
+  apiCall('GET', `${baseApiUrl}/track/`, data)
 );
 const getTrackInfo = (trackId)=>(
   apiCall('GET', `${baseApiUrl}/track/${trackId}/`));
