@@ -1,7 +1,9 @@
 import os
 import psycopg2
 
-from dbwrap import connect
+from dbwrap import connect, midifeatures
+from time import sleep
+
 
 #------------------------------------------------------------------------------
 #                                jSymbolic
@@ -37,15 +39,17 @@ def install_jsymbolic():
 def check_feature_table():
     conn = connect()
 
-    create_table_if_needed(conn)
+    wait_for_table_creation(conn)
 
     conn.close()
 
 
 def create_table_if_needed(conn):
     cur = conn.cursor()
-    print("Looking for table 'midifeatures'...", end=" ")
-    cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='midifeatures');")
+
+    print("Looking for table '{}'...".format(midifeatures), end=" ")
+    cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='{}');".format(midifeatures))
+
     if cur.fetchone()[0]:
         print("found.")
     else:
@@ -57,9 +61,27 @@ def create_table_if_needed(conn):
     cur.close()
 
 
+def wait_for_table_creation(conn):
+    cur = conn.cursor()
+
+    print("Looking for table '{}'...".format(midifeatures), end=" ")
+    cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='{}');".format(midifeatures))
+
+    while not cur.fetchone()[0]:
+        print("wait 10 sec...", end=" ")
+        sleep(10)
+        cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='{}');".format(midifeatures))
+
+    print("found.")
+
+    cur.close()
+
+
 def create_query():
     feature_names = get_feature_names()
-    query = "CREATE TABLE IF NOT EXISTS midifeatures (\n"
+
+    query = "CREATE TABLE IF NOT EXISTS {} (\n".format(midifeatures)
+
     query += "\tfilename varchar PRIMARY KEY,\n"
     for feature_name in feature_names:
         column_name = convert_feature_to_column_name(feature_name)
@@ -69,8 +91,40 @@ def create_query():
 
 
 def get_feature_names():
-    with open("config/feature_names.txt", "r") as f:
-        feature_names = f.read().split(",")
+
+    histogram_nbins = {
+        "Basic_Pitch_Histogram": 128,
+        "Pitch_Class_Histogram": 12,
+        "Folded_Fifths_Pitch_Class_Histogram": 12,
+        "Melodic_Interval_Histogram": 128,
+        "Vertical_Interval_Histogram": 128,
+        "Wrapped_Vertical_Interval_Histogram": 12,
+        "Chord_Type_Histogram": 11,
+        "Rhythmic_Value_Histogram": 12,
+        "Rhythmic_Value_Median_Run_Lengths_Histogram": 12,
+        "Rhythmic_Value_Variability_in_Run_Lengths_Histogram": 12,
+        "Beat_Histogram_Tempo_Standardized": 161,
+        "Beat_Histogram": 161,
+        "Time_Prevalence_of_Pitched_Instruments": 128,
+        "Note_Prevalence_of_Unpitched_Instruments": 47,
+        "Note_Prevalence_of_Pitched_Instruments": 128,
+        "Unpitched_Instruments_Present": 47,
+        "Pitched_Instruments_Present": 128,
+        "Initial_Time_Signature": 2,
+    }
+    with open("config/jsymbolic_config.txt") as f:
+        line = f.readline()
+        while not line.startswith("<features_to_extract>"):
+            line = f.readline()
+        names = [name.strip().replace(" ", "_") for name in f.readlines()]
+    feature_names = []
+    for name in names:
+        if name in histogram_nbins:
+            for i in range(histogram_nbins[name]):
+                feature_names.append(name + "_{}".format(i))
+        else:
+            feature_names.append(name)
+
     return feature_names
 
 
