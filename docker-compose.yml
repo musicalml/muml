@@ -6,44 +6,48 @@ services:
     tty: true
     restart: always
     build: ./database
-    expose:
-      - "5432"
     volumes:
-      - "./postgres-data:/var/lib/postgresql/data"
+      - "postgres_data:/var/lib/postgresql/data"
 
   gunicorn:
     tty: true
     restart: always
     build: ./backend/
-    expose:
-      - "8080"
     volumes:
       - "static:/static/"
-      - "start_lock:/usr/lock/"
       - "./backend:/usr/src/app"
       - "./frontend:/usr/src/js"
       - "./midi_import:/usr/midi"
-    command: ["sh", "-c", "/usr/bin/run.sh"]
+    command:
+      - gunicorn
+      - -w
+      - "2"
+      - -b
+      - :8080
+      - backend.wsgi
+      - --reload
 
   npm:
     tty: true
     restart: "no"
-    image: "mhart/alpine-node"
+    image: node
     working_dir: "/usr/src/js"
     volumes:
       - "./frontend:/usr/src/js"
-      - "start_lock:/usr/lock/"
-    command: ["sh", "-c", "yarn && yarn build && touch /usr/lock/lock"]
+    command:
+      - sh
+      - -c
+      - yarn && yarn build
 
   nginx:
     tty: true
     restart: always
     build: ./nginx/
     ports:
-      - "8080:80"
+      - "${NGINX_PORT:-8080}:80"
     volumes:
       - "static:/www/static"
-      
+
   ml:
     tty: true
     stdin_open: true
@@ -63,6 +67,7 @@ services:
 
 volumes:
   static:
+  postgres_data:
   start_lock:
     driver_opts:
       type: tmpfs
