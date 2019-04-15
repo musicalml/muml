@@ -11,8 +11,7 @@ def connect():
     while not connected:
         print("Connecting to database...", end=" ")
         try:
-            conn = psycopg2.connect(host="database", user="postgres",
-                                    password="postgres", dbname="muml")
+            conn = psycopg2.connect(host="database", user="django", dbname="muml")
 
             connected = True
             print("done.")
