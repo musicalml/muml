@@ -119,7 +119,7 @@ STATIC_URL = '/static/'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [STATIC_ROOT],
+        'DIRS': ['/usr/src/js/build/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
