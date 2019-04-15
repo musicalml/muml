@@ -1,69 +1,56 @@
 ---
 version: '3'
-services:
 
+services:
   database:
     tty: true
     restart: always
-    build: ./database
-    expose:
-      - "5432"
+    image: postgres:9.6-alpine
+    environment:
+      POSTGRES_USER: django
+      POSTGRES_DB: muml
     volumes:
-      - "./postgres-data:/var/lib/postgresql/data"
+      - "postgres_data:/var/lib/postgresql/data"
 
-  gunicorn:
-    tty: true
+  mu:
     restart: always
-    build: ./backend/
-    expose:
-      - "8080"
+    image: afakeman/mu
+    build: ./mu/
     volumes:
       - "static:/static/"
-      - "start_lock:/usr/lock/"
-      - "./backend:/usr/src/app"
-      - "./frontend:/usr/src/js"
       - "./midi_import:/usr/midi"
-    command: ["sh", "-c", "/usr/bin/run.sh"]
-
-  npm:
-    tty: true
-    restart: "no"
-    image: "mhart/alpine-node"
-    working_dir: "/usr/src/js"
-    volumes:
-      - "./frontend:/usr/src/js"
-      - "start_lock:/usr/lock/"
-    command: ["sh", "-c", "yarn && yarn build && touch /usr/lock/lock"]
+    command:
+      - gunicorn
+      - -w
+      - "2"
+      - -b
+      - :8080
+      - backend.wsgi
+      - --reload
 
   nginx:
     tty: true
     restart: always
     build: ./nginx/
+    image: afakeman/muml-nginx
     ports:
-      - "8080:80"
+      - "${NGINX_PORT:-8080}:80"
     volumes:
       - "static:/www/static"
-      
+
   ml:
     tty: true
     stdin_open: true
     restart: always
+    image: afakeman/ml
     build: ./ml
     working_dir: "/app/ml"
     volumes:
-      - "./ml:/app/ml"
       - "./midi_import:/app/midi_import"
-    expose:
-      - "9000"
-    ports:
-      - "9000:9000"
     depends_on:
       - database
     command: ["bash", "-c", "/app/ml/run.sh"]
 
 volumes:
   static:
-  start_lock:
-    driver_opts:
-      type: tmpfs
-      device: tmpfs
+  postgres_data:
