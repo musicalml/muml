@@ -7,7 +7,7 @@ COPY requirements.txt build.sh ./build/
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app/ml/src
 
-RUN apt-get update 
+RUN apt-get update
 RUN apt-get --assume-yes install apt-utils
 RUN apt-get --assume-yes install default-jre \
                                  postgresql postgresql-contrib \
@@ -18,5 +18,8 @@ RUN pip3 install --no-cache-dir -r build/requirements.txt
 
 RUN bash build/build.sh
 RUN rm -rf build
+
+ADD . ml
+WORKDIR /app/ml
 
 EXPOSE 9000

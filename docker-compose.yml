@@ -1,22 +1,23 @@
 ---
 version: '3'
-services:
 
+services:
   database:
     tty: true
     restart: always
-    build: ./database
+    image: postgres:9.6-alpine
+    environment:
+      POSTGRES_USER: django
+      POSTGRES_DB: muml
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
 
-  gunicorn:
-    tty: true
+  mu:
     restart: always
-    build: ./backend/
+    image: afakeman/mu
+    build: ./mu/
     volumes:
       - "static:/static/"
-      - "./backend:/usr/src/app"
-      - "./frontend:/usr/src/js"
       - "./midi_import:/usr/midi"
     command:
       - gunicorn
@@ -27,22 +28,11 @@ services:
       - backend.wsgi
       - --reload
 
-  npm:
-    tty: true
-    restart: "no"
-    image: node
-    working_dir: "/usr/src/js"
-    volumes:
-      - "./frontend:/usr/src/js"
-    command:
-      - sh
-      - -c
-      - yarn && yarn build
-
   nginx:
     tty: true
     restart: always
     build: ./nginx/
+    image: afakeman/muml-nginx
     ports:
       - "${NGINX_PORT:-8080}:80"
     volumes:
@@ -52,10 +42,10 @@ services:
     tty: true
     stdin_open: true
     restart: always
+    image: afakeman/ml
     build: ./ml
     working_dir: "/app/ml"
     volumes:
-      - "./ml:/app/ml"
       - "./midi_import:/app/midi_import"
     depends_on:
       - database
@@ -64,7 +54,3 @@ services:
 volumes:
   static:
   postgres_data:
-  start_lock:
-    driver_opts:
-      type: tmpfs
-      device: tmpfs
