@@ -54,5 +54,27 @@ const getChords = (trackId)=>(
 const getNotes = (trackId)=>(
   apiCall('GET', `${baseApiUrl}/track/${trackId}/notes/`));
 
+const apiFormData = (method, url, data) => {
+  return fetch(url, {
+    method: method,
+    headers: {
+      'X-CSRFToken': Cookies.get('csrftoken'),
+    },
+    body: data,
+    credentials: 'include',
+  }).then((response) => {
+    if (!response.ok) {
+      return null;
+    }
+    return response.json();
+  });
+};
+
+const loadMidi = (file, name)=>{
+  let data = new FormData();
+  data.append('files', file, name);
+  return apiFormData('POST', `${baseApiUrl}/load_midi/`, data);
+};
+
 export default apiCall;
-export {getChords, getTracks, getTrackInfo, getNotes, compareTracks};
+export {getChords, getTracks, getTrackInfo, getNotes, compareTracks, loadMidi};

@@ -38,19 +38,6 @@ services:
     volumes:
       - "static:/www/static"
 
-  ml:
-    tty: true
-    stdin_open: true
-    restart: always
-    image: afakeman/ml
-    build: ./ml
-    working_dir: "/app/ml"
-    volumes:
-      - "./midi_import:/app/midi_import"
-    depends_on:
-      - database
-    command: ["bash", "-c", "/app/ml/run.sh"]
-
 volumes:
   static:
   postgres_data:

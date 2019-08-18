@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import styles from './FreePlayScreen.module.css';
 import NoteStream from '../Piano/NoteStream';
 import Piano from '../Piano';
+import Tone from 'tone';
 
 import {keyToMidiCode} from '../Piano/misc';
 
