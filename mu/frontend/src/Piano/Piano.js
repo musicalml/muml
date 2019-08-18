@@ -5,6 +5,7 @@ import PianoKeyboard from './PianoKeyboard';
 import PianoMidiInput from './PianoMidiInput.js';
 import {keysWithoutFakes} from './misc';
 import getPianoSynth from './PianoSynth';
+import Tone from "tone";
 
 
 const isPressed = (button) => (Object.keys(button).some(
@@ -76,7 +77,7 @@ class Piano extends Component {
    */
   onPianoKeyEvent(key, active) {
     if (active) {
-      this.synth.triggerAttack(key);
+      this.synth.triggerAttack(key, Tone.context.currentTime);
     } else {
       this.synth.triggerRelease(key);
     }

@@ -3,6 +3,7 @@ import freePlayStyles from './FreePlayScreen.module.css';
 import styles from './ListenScreen.module.css';
 import NoteStream from '../Piano/NoteStream';
 import Piano from '../Piano';
+import Tone from 'tone';
 
 import {getNotes, getTrackInfo} from '../Api';
 import {midiCodeToKey} from 'Piano/misc';

@@ -10,4 +10,5 @@ urlpatterns = [
     path('track/<int:pk>/chords/', views.track_chords, name='track_chord'),
     path('track/<int:pk>/notes/', views.track_notes, name='track_notes'),
     path(r'drf/', include('rest_framework.urls', namespace='rest_framework')),
+    path('load_midi/', views.MidiUploadView.as_view(), name='load_midi')
 ]

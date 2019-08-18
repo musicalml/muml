@@ -1,26 +1,16 @@
-from api.models import Midi, MidiFilter
+from api.models import Midi
 from api.serializers import MidiListSerializer, MidiDetailSerializer, MidiInfoSerializer
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.parsers import MultiPartParser
+from rest_framework.views import APIView
+
 from midi.miscs import raw_list_to_track
 from midi.midisong import MidiSong, list_note_nums
 from midi.comparison import compare_midisongs
 
-FILTER_LONG_SHORT = {'nd': 'note_density',
-                     'pcv': 'pitch_class_variability',
-                     'mom': 'major_or_minor',
-                     'mcmi': 'most_common_melodic_interval',
-                     'mmi': 'mean_melodic_interval',
-                     'aoa': 'amount_of_arpeggiation',
-                     'rn': 'repeated_notes',
-                     'cm': 'chromatic_motion',
-                     'mthirds': 'melodic_thirds',
-                     'vt': 'vertical_thirds',
-                     'mtemp': 'mean_tempo',
-                     'dis': 'duration_in_seconds',
-                     }
-
+from django.core.management import call_command
 
 class MidiList(generics.ListCreateAPIView):
     serializer_class = MidiListSerializer
@@ -28,21 +18,6 @@ class MidiList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Midi.objects.all()
 
-        query_orders = self.request.query_params.getlist('f', [])
-        formatted_orders = []
-        for i in range(len(query_orders)):
-            prefix = ''
-            main = ''
-            if query_orders[i][0] == '-':
-                prefix = '-'
-                main = FILTER_LONG_SHORT.get(query_orders[i][1:], None)
-            else:
-                main = FILTER_LONG_SHORT.get(query_orders[i], None)
-            if main is None:
-                continue
-            formatted_orders.append(prefix + 'filter__' + main)
-        print(formatted_orders)
-        queryset = queryset.order_by(*formatted_orders, 'name')
         return queryset
 
 
@@ -59,6 +34,9 @@ class MidiInfo(generics.RetrieveUpdateDestroyAPIView):
 @api_view(['POST'])
 def track_compare(request, pk):
     raw_list = request.data['notes']
+    for i in range(1, len(raw_list)):
+        raw_list[i][-1] -= raw_list[0][-1]
+    raw_list[0][-1] = 0
     test_song = MidiSong(raw_list_to_track(raw_list))
     try:
         original = Midi.objects.get(id=pk)
@@ -94,3 +72,18 @@ def track_notes(request, pk):
     for note in original_song.notes:
         notes.append([note.note, note.time, note.time + note.duration, note.duration])
     return Response(notes)
+
+
+class MidiUploadView(APIView):
+    parser_classes = [MultiPartParser]
+
+    def post(self, request, format=None):
+
+        file = request.data['files']
+        name = file.name
+        path = '/tmp/{}.mid'.format(name)
+        with open(path, 'wb+') as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+        call_command('load_midi', path)
+        return Response('ok')
