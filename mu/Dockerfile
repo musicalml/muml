@@ -22,3 +22,5 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8080
+
+CMD ["gunicorn", "-w", "2", "-b", ":8080", "backend.wsgi", "--reload"]

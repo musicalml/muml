@@ -7,6 +7,10 @@ services:
       - "./mu/backend:/usr/src/app"
       - "./mu/frontend:/usr/src/js"
 
+  nginx:
+    volumes:
+      - "./mu/frontend/build/static:/www/static"
+
   npm:
     tty: true
     restart: "no"
