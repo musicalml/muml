@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {Button, Form, FormGroup, FormControl, ControlLabel, Label} from 'react-bootstrap';
+import {Button, Form, FormGroup, FormControl, Badge} from 'react-bootstrap';
 import icon from './icon.jpg';
-import {loadMidi} from 'Api';
+import {loadMidi} from '../Api';
 
 /**
  * A track info screen with controls to listen to/play a song
@@ -49,22 +49,14 @@ class AdminScreen extends Component {
   getLoadMidiForm() {
     return (<Form>
       <FormGroup controlId="midName">
-        <Label>Midi name</Label>
+        <Badge>Midi name</Badge>
         <FormControl type="text" inputRef={(ref) => {
           this.name = ref;
         }} placeholder="Enter midi name"/>
       </FormGroup>
       <FormGroup>
-        <ControlLabel htmlFor="fileUpload" style={{cursor: 'pointer'}}>
-          <Label>Add midi</Label>
-          <FormControl
-            id="fileUpload"
-            type="file"
-            accept=".mid"
-            onChange={this.loadFile}
-            style={{display: 'none'}}
-          />
-        </ControlLabel>
+        <Badge>Add midi</Badge>
+        <input type="file" accept=".mid" onChange={this.loadFile}/>
       </FormGroup>
       <Button variant="primary" onClick={this.sendFile}>Submit</ Button>
     </Form>);

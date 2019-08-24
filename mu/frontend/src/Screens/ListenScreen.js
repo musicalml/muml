@@ -3,6 +3,7 @@ import freePlayStyles from './FreePlayScreen.module.css';
 import styles from './ListenScreen.module.css';
 import NoteStream from '../Piano/NoteStream';
 import Piano from '../Piano';
+import {Button} from 'react-bootstrap';
 import Tone from 'tone';
 
 import {getNotes, getTrackInfo} from '../Api';
@@ -18,6 +19,7 @@ class ListenScreen extends Component {
       notes: null,
       trackInfo: null,
       trackId: trackId ? trackId : null,
+      paused: false,
     };
     this.time = -2;
     this.last = null;
@@ -33,6 +35,7 @@ class ListenScreen extends Component {
     this.onTrackInfoLoaded = this.onTrackInfoLoaded.bind(this);
     this.turnOffNotes = this.turnOffNotes.bind(this);
     this.turnOnNotes = this.turnOnNotes.bind(this);
+    this.handlePause = this.handlePause.bind(this);
     this.noteStream = React.createRef();
   };
 
@@ -65,6 +68,11 @@ class ListenScreen extends Component {
     //computing
     const scaled_time = time / 1000;
     let last = this.last;
+    if (this.state.paused) {
+      this.last = scaled_time;
+      return;
+    }
+
     let onNotes = this.onNotes;
     let noteToCheck = this.noteToCheck;
     if (!last)
@@ -88,6 +96,10 @@ class ListenScreen extends Component {
     this.noteToCheck = noteToCheck;
     this.onNotes = onNotes;
 
+  }
+
+  handlePause() {
+    this.setState({paused: !this.state.paused});
   }
 
   turnOffNotes(notes, time) {
@@ -119,7 +131,8 @@ class ListenScreen extends Component {
     return(
       <div className={styles.screen_container}>
         <div className={styles.header_container}>
-          {trackInfo && <h1>{trackInfo.name}</h1>}
+          {trackInfo && <p>{trackInfo.name}</p>}
+          <Button variant="secondary" onClick={this.handlePause} > Pause </Button>
         </div>
         <div className={styles.free_play_container}>
           <div className={freePlayStyles.screen_container}>

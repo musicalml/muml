@@ -31,7 +31,7 @@ class PureCanvas extends React.Component {
   }
 
   static propTypes = {
-    contextRef: PropTypes.object,
+    contextRef: PropTypes.func,
   }
 
   /**
@@ -176,7 +176,6 @@ class NoteStream extends Component {
   drawNotes(newTime, timeScale) {
     const curNotes = this.props.change !== null ? this.props.notes
                                                 : this.state.notes;
-    console.log(newTime, curNotes);
 
     let i = this.state.hidden_notes;
     let foundStart = false;
