@@ -3,6 +3,7 @@ from django.urls import path, include
 
 
 urlpatterns = [
+    path('csrf_token/', views.csrf_token, name='csrf_token'),
     path('track/', views.MidiList.as_view(), name='track'),
     path('track/<int:pk>/', views.MidiInfo.as_view(), name='track_info'),
     path('track/<int:pk>/midi/', views.MidiDetail.as_view(), name='track_detail'),

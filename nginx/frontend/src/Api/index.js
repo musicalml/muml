@@ -8,18 +8,23 @@ import Cookies from 'js-cookie';
  * @return {Promise} - a promise for parsed json response.
  */
 const apiCall = (method, url, params) => {
+  const csrfToken = Cookies.get('csrftoken');
+  if (csrfToken === undefined) {
+    return fetch(`${baseApiUrl}/csrf_token/`)
+        .then((response) => response.json())
+        .then((data) => {
+          Cookies.set('csrftoken', data.csrf_token);
+          return apiCall(method, url, params);
+        });
+  }
   const {data, requestUrl} = (() => {
     if (params === null || params === undefined) {
       return {data: null, requestUrl: url};
     }
     if (method === 'GET') {
-      const data = null;
-      const esc = encodeURIComponent;
-      const query = Object.keys(params)
-          .map((k) => `${esc(k)}=${esc(params[k])}`)
-          .join('&');
+      const query = new URLSearchParams(params).toString();
       const requestUrl = `${url}?${query}`;
-      return {data, requestUrl};
+      return {data: null, requestUrl};
     } else {
       return {data: params, requestUrl: url};
     }
@@ -27,7 +32,6 @@ const apiCall = (method, url, params) => {
   return fetch(requestUrl, {
     method: method,
     headers: {
-      'X-CSRFToken': Cookies.get('csrftoken'),
       'Content-Type': 'application/json',
     },
     body: data != null ? JSON.stringify(data) : null,
@@ -55,11 +59,17 @@ const getNotes = (trackId)=>(
   apiCall('GET', `${baseApiUrl}/track/${trackId}/notes/`));
 
 const apiFormData = (method, url, data) => {
+  const csrfToken = Cookies.get('csrftoken');
+  if (csrfToken === undefined) {
+    return fetch(`${baseApiUrl}/csrf_token/`)
+        .then((response) => response.json())
+        .then((json) => {
+          Cookies.set('csrftoken', json.csrf_token);
+          return apiFormData(method, url, data);
+        });
+  }
   return fetch(url, {
     method: method,
-    headers: {
-      'X-CSRFToken': Cookies.get('csrftoken'),
-    },
     body: data,
     credentials: 'include',
   }).then((response) => {
