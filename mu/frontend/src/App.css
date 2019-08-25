@@ -8,6 +8,7 @@
 .screen_container {
     flex: 1;
     display: flex;
+    height: 100%;
 }
 
 canvas {

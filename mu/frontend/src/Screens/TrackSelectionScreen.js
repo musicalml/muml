@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {DropdownButton, MenuItem, Button, ListGroup, ListGroupItem} from
+import {DropdownButton, DropdownItem, Button, ListGroup, ListGroupItem} from
   'react-bootstrap';
 
 import apiCall, {getTracks} from 'Api';
@@ -119,14 +119,14 @@ class TrackSelectionScreen extends Component {
           {tracks === [] && 'No tracks found...'}
           {tracks && <ListGroup style={{width: '100%'}}>
             {tracks && tracks.map((track) => (
-              <ListGroupItem href={`/tracks/${track.id}`} key={track.id}>
+              <ListGroupItem action href={`/tracks/${track.id}`} key={track.id}>
                 {track.name}
               </ListGroupItem>
             ))}
           </ListGroup> }
         </div>
         <div className={styles.next_prev_button_container}>
-          <Button disabled={prevPageUrl === null} onClick={this.gotoPrevPage}>
+          <Button variant="dark" disabled={prevPageUrl === null} onClick={this.gotoPrevPage}>
             Prev page
           </Button>
           <DropdownButton
@@ -134,18 +134,19 @@ class TrackSelectionScreen extends Component {
             id='sort_by'
             onSelect={this.onSortOptionSelect.bind(this)}
             dropup
+            variant="dark"
           >
-            <MenuItem eventKey={null} active={sortBy === null}>
+            <DropdownItem eventKey={null} active={sortBy === null}>
               Name
-            </MenuItem>
-            <MenuItem divider />
+            </DropdownItem>
+            <DropdownItem variant="dark" divider />
             {Object.keys(filters).sort().map((key)=>
-              <MenuItem eventKey={key} active={key === sortBy} key={key}>
+              <DropdownItem eventKey={key} active={key === sortBy} key={key}>
                 {filters[key]}
-              </MenuItem>
+              </DropdownItem>
             )}
           </DropdownButton>
-          <Button disabled={nextPageUrl === null} onClick={this.gotoNextPage}>
+          <Button disabled={nextPageUrl === null} variant="dark" onClick={this.gotoNextPage}>
             Next page
           </Button>
         </div>

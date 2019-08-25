@@ -24,19 +24,13 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div className={'app'}>
-          <Navbar style={{marginBottom: "0"}}>
-            <Navbar.Header>
-              <Navbar.Brand>
-                <a href="/">MUML</a>
-              </Navbar.Brand>
-            </Navbar.Header>
+          <Navbar bg="dark" variant="dark" fixed="top" sticky="top">
+            <Navbar.Brand href="/">
+              MUML
+            </Navbar.Brand>
             <Nav>
-              <NavItem eventKey={1} href="/tracks">
-                Tracks
-              </NavItem>
-              <NavItem eventKey={2} href="/play">
-                Free play
-              </NavItem>
+              <Nav.Link href="/tracks">Tracks</Nav.Link>
+              <Nav.Link href="/play">Free play</Nav.Link>
             </Nav>
           </Navbar>
           <div className={'screen_container'}>
