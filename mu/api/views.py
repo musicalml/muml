@@ -1,5 +1,7 @@
 from api.models import Midi
 from api.serializers import MidiListSerializer, MidiDetailSerializer, MidiInfoSerializer
+from django.views.decorators.http import require_http_methods
+from django.middleware.csrf import get_token
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -30,6 +32,10 @@ class MidiInfo(generics.RetrieveUpdateDestroyAPIView):
     queryset = Midi.objects.all()
     serializer_class = MidiInfoSerializer
 
+
+@api_view(['GET'])
+def csrf_token(request):
+    return Response({"csrf_token": get_token(request)})
 
 @api_view(['POST'])
 def track_compare(request, pk):
@@ -72,7 +78,6 @@ def track_notes(request, pk):
     for note in original_song.notes:
         notes.append([note.note, note.time, note.time + note.duration, note.duration])
     return Response(notes)
-
 
 class MidiUploadView(APIView):
     parser_classes = [MultiPartParser]

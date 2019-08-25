@@ -57,7 +57,7 @@ class LearningScreen extends Component {
 
   static propTypes = {
     match: PropTypes.object,
-    onFinishTrack: PropTypes.function,
+    onFinishTrack: PropTypes.func,
   };
 
   /**
