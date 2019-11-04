@@ -3,6 +3,8 @@ version: '3'
 
 services:
   mu:
+    environment:
+      - "APP_KEY=pduqmeqvluvsay+)!q9va+z8@(orxny6nenlam77@-qs=x&d#0"
     volumes:
       - "./mu/:/var/www/backend/"
 
