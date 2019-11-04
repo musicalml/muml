@@ -4,12 +4,11 @@ version: '3'
 services:
   mu:
     volumes:
-      - "./mu/backend:/usr/src/app"
-      - "./mu/frontend:/usr/src/js"
+      - "./mu/:/var/www/backend/"
 
   nginx:
     volumes:
-      - "./mu/frontend/build/static:/www/static"
+      - "./nginx/frontend/build:/var/www/html:ro"
 
   npm:
     tty: true
@@ -17,9 +16,8 @@ services:
     image: node
     working_dir: "/usr/src/js"
     volumes:
-      - "./mu/frontend:/usr/src/js"
+      - "./nginx/frontend:/usr/src/js"
     command:
       - sh
       - -c
       - yarn && yarn build
-
