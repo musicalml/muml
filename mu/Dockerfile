@@ -9,9 +9,10 @@ RUN apt-get -y install \
      g++ \
      libffi-dev
 
-ADD . .
 RUN pip install --upgrade pip
+ADD requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+ADD . .
 
 EXPOSE 8080
 
