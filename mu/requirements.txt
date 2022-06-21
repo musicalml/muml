@@ -7,4 +7,4 @@ django-rest-framework==0.1.0
 djangorestframework==3.8.2
 mido==1.2.9
 scipy==1.1.0
-numpy==1.15.2
+numpy==1.22.0
